@@ -2,7 +2,30 @@
 
 A set of Sphinx directives for Ewoks
 
-## Ewoks tasks directive
+## Quick start
+
+```bash
+pip install ewokssphinx
+```
+
+Then, add `ewokssphinx` to the list of `extensions` in the Sphinx configuration file:
+
+```python
+# conf.py
+
+...
+
+extensions = [
+    ...,
+    "ewokssphinx"
+]
+```
+
+## Contents
+
+There is only one directive for now.
+
+### Ewoks tasks directive
 
 The `ewokstasks` directive will generate documentation automatically for the Ewoks **class** tasks contained in the module. As for `autodoc`, the module must be importable.
 
