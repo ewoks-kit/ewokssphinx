@@ -10,22 +10,17 @@ from .utils import field
 
 class EwoksTaskDirective(Directive):
     required_arguments = 1
-    optional_arguments = 0
-    final_argument_whitespace = True
-    option_spec = {}
-    has_content = False
 
     def run(self):
-
         module_pattern = self.arguments[0]
         results = []
         for module in _iter_modules_from_pattern(module_pattern):
             for task in _iter_discover_tasks_from_modules(module, task_type="class"):
-                results.extend(
+                title = task["task_identifier"].split(".")[-1]
+                task_section = nodes.section(ids=[title])
+                task_section.extend(
                     [
-                        nodes.title(
-                            text=task["task_identifier"].split(".")[-1],
-                        ),
+                        nodes.title(text=title),
                         nodes.paragraph(text=task["description"]),
                         nodes.field_list(
                             "",
@@ -54,4 +49,5 @@ class EwoksTaskDirective(Directive):
                         ),
                     ]
                 )
+                results.append(task_section)
         return results
