@@ -1,0 +1,15 @@
+include:
+  - project: dau/ci/pyci
+    file: .gitlab-ci-template.yml
+
+build_sdist:
+  extends: .build_sdist
+
+assets:
+  extends: .assets
+
+testpypi:
+  extends: .testpypi
+
+pypi:
+  extends: .pypi
