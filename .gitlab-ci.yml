@@ -2,16 +2,16 @@ include:
   - project: dau/ci/pyci
     file: .gitlab-ci-template.yml
 
-# test-3.12:
-#   rules:
-#     - if: $CI_MERGE_REQUEST_ID
-#   extends: .test-3.12
+test-3.12:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+  extends: .test-3.12
 
 build_sdist:
   extends: .build_sdist
 
-# test_sdist-3.12:
-#   extends: .test_sdist-3.12
+test_sdist-3.12:
+  extends: .test_sdist-3.12
 
 assets:
   extends: .assets

@@ -2,7 +2,8 @@
 
 ## 0.2.0 (unreleased)
 
-Task descriptions are now parsed with RST rather than stringified.
+- ✨ Task descriptions are now parsed with RST rather than stringified.
+- 🐛 Fix inconsistent order of task input and output fields
 
 ## 0.1.1
 

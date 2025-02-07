@@ -46,13 +46,13 @@ class EwoksTaskDirective(SphinxDirective):
                         field("Task type", task["task_type"]),
                         field(
                             "Required inputs",
-                            ", ".join(task["required_input_names"]),
+                            ", ".join(sorted(task["required_input_names"])),
                         ),
                         field(
                             "Optional inputs",
-                            ", ".join(task["optional_input_names"]),
+                            ", ".join(sorted(task["optional_input_names"])),
                         ),
-                        field("Outputs", ", ".join(task["output_names"])),
+                        field("Outputs", ", ".join(sorted(task["output_names"]))),
                     ),
                 ]
                 results.append(task_section)
