@@ -29,6 +29,10 @@ There is only one directive for now.
 
 The `ewokstasks` directive will generate documentation automatically for the Ewoks **class** tasks contained in the module. As for `autodoc`, the module must be importable.
 
+
+> ⚠️ The `ewokstasks` directive must be placed in the main section of the document! Do not place it in another directive (admonition or other) or the structure of the document may be broken! 
+
+
 _Example_: 
 ```
 .. ewokstasks:: ewoksxrpd.tasks.integrate
