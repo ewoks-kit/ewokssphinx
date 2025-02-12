@@ -11,3 +11,15 @@ class MyTask(
 
     def run(self):
         pass
+
+
+def my_other_task(f, g, h=None):
+    """My other task documentation"""
+
+    pass
+
+
+def run(i, j=None, k=None):
+    """Run task documentation"""
+
+    pass
