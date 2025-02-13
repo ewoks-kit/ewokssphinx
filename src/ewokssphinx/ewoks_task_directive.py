@@ -1,20 +1,27 @@
 import inspect
 from sphinx.util.docutils import SphinxDirective
 from docutils import nodes
+from docutils.parsers.rst import directives
 from ewokscore.task_discovery import discover_tasks_from_modules
 
 
 from .utils import field
 
 
+def _task_type_option(argument):
+    return directives.choice(argument, ("class", "method", "ppfmethod"))
+
+
 class EwoksTaskDirective(SphinxDirective):
     required_arguments = 1
+    option_spec = {"task_type": _task_type_option}
 
     def run(self):
         module_pattern = self.arguments[0]
+        task_type = self.options.get("task_type")
 
         results = []
-        for task in discover_tasks_from_modules(module_pattern, task_type="class"):
+        for task in discover_tasks_from_modules(module_pattern, task_type=task_type):
             title = task["task_identifier"].split(".")[-1]
             task_section = nodes.section(ids=[title])
 

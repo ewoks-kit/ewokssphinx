@@ -1,7 +1,52 @@
 from sphinx.testing import restructuredtext
-from docutils import nodes
 
-from .conftest import assert_node, assert_field_node
+from .conftest import assert_task_nodes
+
+
+def _assert_class_task_nodes(nodes):
+    assert_task_nodes(
+        nodes,
+        name="MyTask",
+        doc="""My task documentation""",
+        task_type="class",
+        required_inputs="a, b, c",
+        optional_inputs="d, e",
+        outputs="error, result",
+    )
+
+
+def _assert_method_nodes(nodes):
+    assert_task_nodes(
+        nodes[0],
+        name="my_other_task",
+        doc="""My other task documentation""",
+        task_type="method",
+        required_inputs="f, g",
+        optional_inputs="h",
+        outputs="return_value",
+    )
+
+    assert_task_nodes(
+        nodes[1],
+        name="run",
+        doc="""Run task documentation""",
+        task_type="method",
+        required_inputs="i",
+        optional_inputs="j, k",
+        outputs="return_value",
+    )
+
+
+def _assert_ppfmethod_nodes(nodes):
+    assert_task_nodes(
+        nodes,
+        name="run",
+        doc="""Run task documentation""",
+        task_type="ppfmethod",
+        required_inputs="i",
+        optional_inputs="j, k",
+        outputs="return_value",
+    )
 
 
 def test_ewokstasks(app):
@@ -9,32 +54,43 @@ def test_ewokstasks(app):
         app, ".. ewokstasks:: ewokssphinx.tests.dummy_tasks"
     )
 
+    assert len(parsed_nodes) == 4
+    _assert_class_task_nodes(parsed_nodes[0])
+    _assert_ppfmethod_nodes(parsed_nodes[1])
+    _assert_method_nodes(parsed_nodes[2:])
+
+
+def test_ewokstasks_class(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
+              :task_type: class
+        """,
+    )
+
     assert len(parsed_nodes) == 3
-    assert_node(parsed_nodes[0], nodes.title, "MyTask")
-    assert_node(parsed_nodes[1], nodes.paragraph, "My task documentation")
-    assert_node(parsed_nodes[2], nodes.field_list)
-    assert_field_node(
-        parsed_nodes[2][0],
-        name="Identifier",
-        value="ewokssphinx.tests.dummy_tasks.MyTask",
+    _assert_class_task_nodes(parsed_nodes)
+
+
+def test_ewokstasks_method(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
+              :task_type: method
+        """,
     )
-    assert_field_node(
-        parsed_nodes[2][1],
-        name="Task type",
-        value="class",
+
+    assert len(parsed_nodes) == 2
+    _assert_method_nodes(parsed_nodes)
+
+
+def test_ewokstasks_ppfmethod(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
+              :task_type: ppfmethod
+        """,
     )
-    assert_field_node(
-        parsed_nodes[2][2],
-        name="Required inputs",
-        value="a, b, c",
-    )
-    assert_field_node(
-        parsed_nodes[2][3],
-        name="Optional inputs",
-        value="d, e",
-    )
-    assert_field_node(
-        parsed_nodes[2][4],
-        name="Outputs",
-        value="error, result",
-    )
+
+    assert len(parsed_nodes) == 3
+    _assert_ppfmethod_nodes(parsed_nodes)

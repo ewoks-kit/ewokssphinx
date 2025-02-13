@@ -3,7 +3,9 @@
 ## 0.2.0 (unreleased)
 
 - ✨ Task descriptions are now parsed with RST rather than stringified.
-- 🐛 Fix inconsistent order of task input and output fields
+- ✨ `ewokstasks` directive now generates documentation for all task types (`class`, `method` and `ppfmethod`).
+- ✨ New `:task_type:` option for `ewokstasks` to generate documentation for only one task type
+- 🐛 Fix inconsistent order of class task input and output fields
 
 ## 0.1.1
 

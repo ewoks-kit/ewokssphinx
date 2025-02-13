@@ -27,7 +27,9 @@ There is only one directive for now.
 
 ### Ewoks tasks directive
 
-The `ewokstasks` directive will generate documentation automatically for the Ewoks **class** tasks contained in the module. As for `autodoc`, the module must be importable.
+#### Basic use
+
+The `ewokstasks` directive will generate documentation automatically for all Ewoks tasks (be it `class`, `method` or `ppfmethod`) contained in the module. As for `autodoc`, the module must be importable.
 
 
 > ⚠️ The `ewokstasks` directive must be placed in the main section of the document! Do not place it in another directive (admonition or other) or the structure of the document may be broken! 
@@ -43,3 +45,18 @@ It is also possible to give a pattern for recursive generation. For example, The
 ```
 .. ewokstasks:: ewoksxrpd.tasks.*
 ```
+
+#### Options
+
+- `:task_type:`: (`class`, `method` or `ppfmethod`)
+
+    Generates documentation only for the specified task type.
+
+    _Example_:
+
+    To generate documentation for the Ewoks **class** tasks in `ewoksxrpd.tasks.integrate`: 
+
+    ```
+    .. ewokstasks:: ewoksxrpd.tasks.integrate
+        :task_type: class
+    ```
