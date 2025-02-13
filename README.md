@@ -40,7 +40,7 @@ _Example_:
 .. ewokstasks:: ewoksxrpd.tasks.integrate
 ```
 
-It is also possible to give a pattern for recursive generation. For example, The following command will generate documentation for all class tasks contained in the modules of `ewoksxrpd.tasks`:
+It is also possible to give a pattern for recursive generation. For example, The following command will generate documentation for all tasks contained in the modules of `ewoksxrpd.tasks`:
 
 ```
 .. ewokstasks:: ewoksxrpd.tasks.*
