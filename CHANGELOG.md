@@ -1,6 +1,6 @@
 # CHANGELOG.md
 
-## 0.2.0 (unreleased)
+## 0.2.0
 
 - ✨ Task descriptions are now parsed with RST rather than stringified.
 - ✨ `ewokstasks` directive now generates documentation for all task types (`class`, `method` and `ppfmethod`).
