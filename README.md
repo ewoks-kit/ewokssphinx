@@ -60,3 +60,14 @@ It is also possible to give a pattern for recursive generation. For example, The
     .. ewokstasks:: ewoksxrpd.tasks.integrate
         :task_type: class
     ```
+
+- `:ignore-import-error:`
+
+    Print a warning instead of raising an error when an import fails.
+
+    _Example_:
+    
+    ```
+    .. ewokstasks:: ewoksxrpd.tasks.integrate
+        :ignore-import-error:
+    ```

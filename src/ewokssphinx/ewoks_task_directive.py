@@ -14,18 +14,27 @@ def _task_type_option(argument):
 
 class EwoksTaskDirective(SphinxDirective):
     required_arguments = 1
-    option_spec = {"task_type": _task_type_option}
+    option_spec = {
+        "task_type": _task_type_option,
+        "ignore-import-error": directives.flag,
+    }
 
     def run(self):
         module_pattern = self.arguments[0]
         task_type = self.options.get("task_type")
+        ignore_import_error = "ignore-import-error" in self.options
 
         results = []
-        for task in discover_tasks_from_modules(module_pattern, task_type=task_type):
-            title = task["task_identifier"].split(".")[-1]
-            task_section = nodes.section(ids=[title])
+        for task in discover_tasks_from_modules(
+            module_pattern,
+            task_type=task_type,
+            raise_import_failure=not ignore_import_error,
+        ):
+            task_name = task["task_identifier"].split(".")[-1]
 
-            task_section += nodes.title(text=title)
+            task_section = nodes.section(ids=[task_name])
+
+            task_section += nodes.title(text=task_name)
             if task["description"]:
                 task_section += self.parse_text_to_nodes(
                     # Clean up indentation from docstrings so that Sphinx properly parses them

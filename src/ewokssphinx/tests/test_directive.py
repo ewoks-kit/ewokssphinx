@@ -1,3 +1,4 @@
+import pytest
 from sphinx.testing import restructuredtext
 
 from .conftest import assert_task_nodes
@@ -94,3 +95,23 @@ def test_ewokstasks_ppfmethod(app):
 
     assert len(parsed_nodes) == 3
     _assert_ppfmethod_nodes(parsed_nodes)
+
+
+def test_ewokstasks_raised_import_error(app):
+    with pytest.raises(ImportError):
+        restructuredtext.parse(
+            app,
+            """.. ewokstasks:: not_existing
+            """,
+        )
+
+
+def test_ewokstasks_ignore_import_error(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. ewokstasks:: not_existing
+            :ignore-import-error:
+        """,
+    )
+
+    assert len(parsed_nodes) == 0
