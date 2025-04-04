@@ -1,23 +1,66 @@
-include:
-  - project: dau/ci/pyci
-    file: .gitlab-ci-template.yml
+variables:
+  UV_VERSION: 0.5
+  BASE_LAYER: bookworm-slim
+  # GitLab CI creates a separate mountpoint for the build directory,
+  # so we need to copy instead of using hard links.
+  UV_LINK_MODE: copy
+
+.base:
+  image: ghcr.io/astral-sh/uv:$UV_VERSION-python3.12-$BASE_LAYER
+  rules:
+    - if: "$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH"
+    - if: "$CI_MERGE_REQUEST_ID"
+
+check:
+  extends: .base
+  timeout: 10m
+  script:
+    - uv tool install ruff
+    - uvx ruff format --check
+    - uvx ruff check
 
 test-3.12:
+  extends: .base
   rules:
-    - if: $CI_MERGE_REQUEST_ID
-  extends: .test-3.12
+    - if: "$CI_MERGE_REQUEST_ID"
+  script:
+    - uv run pytest
 
-build_sdist:
-  extends: .build_sdist
+build:
+  extends: .base
+  script:
+    - uv build
+  artifacts:
+    paths:
+      - dist/
+    when: on_success
+    expire_in: 2h
 
-test_sdist-3.12:
-  extends: .test_sdist-3.12
-
-assets:
-  extends: .assets
+test-build:
+  extends: .base
+  script:
+    - uv run --with ewokssphinx --no-project -- python -m pytest
 
 testpypi:
-  extends: .testpypi
+  extends: .base
+  when: manual
+  rules:
+    - if: "$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH"
+  variables:
+    UV_PUBLISH_TOKEN: $TWINE_PASSWORD
+  needs:
+    - build
+  script:
+    - uv publish --index testpypi
 
 pypi:
-  extends: .pypi
+  extends: .base
+  when: manual
+  rules:
+    - if: "$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH"
+  variables:
+    UV_PUBLISH_TOKEN: $TWINE_PASSWORD
+  needs:
+    - build
+  script:
+    - uv publish
