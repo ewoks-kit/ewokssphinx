@@ -65,7 +65,7 @@ def test_ewokstasks_class(app):
     parsed_nodes = restructuredtext.parse(
         app,
         """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
-              :task_type: class
+              :task-type: class
         """,
     )
 
@@ -77,7 +77,7 @@ def test_ewokstasks_method(app):
     parsed_nodes = restructuredtext.parse(
         app,
         """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
-              :task_type: method
+              :task-type: method
         """,
     )
 
@@ -89,7 +89,7 @@ def test_ewokstasks_ppfmethod(app):
     parsed_nodes = restructuredtext.parse(
         app,
         """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
-              :task_type: ppfmethod
+              :task-type: ppfmethod
         """,
     )
 

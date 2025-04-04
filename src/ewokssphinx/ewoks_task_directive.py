@@ -15,13 +15,13 @@ def _task_type_option(argument):
 class EwoksTaskDirective(SphinxDirective):
     required_arguments = 1
     option_spec = {
-        "task_type": _task_type_option,
+        "task-type": _task_type_option,
         "ignore-import-error": directives.flag,
     }
 
     def run(self):
         module_pattern = self.arguments[0]
-        task_type = self.options.get("task_type")
+        task_type = self.options.get("task-type")
         ignore_import_error = "ignore-import-error" in self.options
 
         results = []

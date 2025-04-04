@@ -48,7 +48,7 @@ It is also possible to give a pattern for recursive generation. For example, The
 
 #### Options
 
-- `:task_type:`: (`class`, `method` or `ppfmethod`)
+- `:task-type:`: (`class`, `method` or `ppfmethod`)
 
     Generates documentation only for the specified task type.
 
@@ -58,7 +58,7 @@ It is also possible to give a pattern for recursive generation. For example, The
 
     ```
     .. ewokstasks:: ewoksxrpd.tasks.integrate
-        :task_type: class
+        :task-type: class
     ```
 
 - `:ignore-import-error:`
