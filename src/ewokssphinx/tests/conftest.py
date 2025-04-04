@@ -31,30 +31,34 @@ def assert_task_nodes(
     parsed_nodes, name, doc, task_type, required_inputs, optional_inputs, outputs
 ):
     assert_node(parsed_nodes[0], nodes.title, name)
-    assert_node(parsed_nodes[1], nodes.paragraph, doc)
-    assert_node(parsed_nodes[2], nodes.field_list)
+    if doc is not None:
+        assert_node(parsed_nodes[1], nodes.paragraph, doc)
+        field_list_nodes = parsed_nodes[2]
+    else:
+        field_list_nodes = parsed_nodes[1]
+    assert_node(field_list_nodes, nodes.field_list)
     assert_field_node(
-        parsed_nodes[2][0],
+        field_list_nodes[0],
         name="Identifier",
         value=f"ewokssphinx.tests.dummy_tasks.{name}",
     )
     assert_field_node(
-        parsed_nodes[2][1],
+        field_list_nodes[1],
         name="Task type",
         value=task_type,
     )
     assert_field_node(
-        parsed_nodes[2][2],
+        field_list_nodes[2],
         name="Required inputs",
         value=required_inputs,
     )
     assert_field_node(
-        parsed_nodes[2][3],
+        field_list_nodes[3],
         name="Optional inputs",
         value=optional_inputs,
     )
     assert_field_node(
-        parsed_nodes[2][4],
+        field_list_nodes[4],
         name="Outputs",
         value=outputs,
     )

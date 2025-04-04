@@ -1,5 +1,11 @@
 # CHANGELOG.md
 
+## 0.3.0 (unreleased)
+
+- **⚠️ Breaking change:** `:task_type:` option was renamed `:task-type:`
+- ✨ New option `:ignore-import-error:` to ignore import errors raised when tasks are discovered by the `ewokstasks` directive
+- 🐛 `ewokstasks` directive no longer include tasks whose name starts with a `_`
+
 ## 0.2.0
 
 - ✨ Task descriptions are now parsed with RST rather than stringified.
