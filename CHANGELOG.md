@@ -1,6 +1,6 @@
 # CHANGELOG.md
 
-## 0.3.0 (unreleased)
+## 0.3.0
 
 - **⚠️ Breaking change:** `:task_type:` option was renamed `:task-type:`
 - ✨ New option `:ignore-import-error:` to ignore import errors raised when tasks are discovered by the `ewokstasks` directive
