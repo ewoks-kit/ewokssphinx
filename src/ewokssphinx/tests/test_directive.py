@@ -41,7 +41,7 @@ def _assert_method_nodes(nodes):
 def _assert_ppfmethod_nodes(nodes):
     assert_task_nodes(
         nodes,
-        name="run",
+        name="dummy_tasks",
         doc="""Run task documentation""",
         task_type="ppfmethod",
         required_inputs="i",
