@@ -30,7 +30,11 @@ class EwoksTaskDirective(SphinxDirective):
             task_type=task_type,
             raise_import_failure=not ignore_import_error,
         ):
-            task_name = task["task_identifier"].split(".")[-1]
+            if task["task_type"] == "ppfmethod":
+                # ppfmethods are all named `run` so use the module name as task name.
+                task_name = task["task_identifier"].split(".")[-2]
+            else:
+                task_name = task["task_identifier"].split(".")[-1]
 
             task_section = nodes.section(ids=[task_name])
 

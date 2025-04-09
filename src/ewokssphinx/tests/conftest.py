@@ -40,7 +40,11 @@ def assert_task_nodes(
     assert_field_node(
         field_list_nodes[0],
         name="Identifier",
-        value=f"ewokssphinx.tests.dummy_tasks.{name}",
+        value=(
+            "ewokssphinx.tests.dummy_tasks.run"
+            if task_type == "ppfmethod"
+            else f"ewokssphinx.tests.dummy_tasks.{name}"
+        ),
     )
     assert_field_node(
         field_list_nodes[1],
