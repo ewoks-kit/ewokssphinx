@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 0.4.0
+
+- ✨ When rendered by the `ewokstasks` directive, the name of `ppfmethod` tasks are now the module name instead of the ambiguous `run` function name.
+
 ## 0.3.0
 
 - **⚠️ Breaking change:** `:task_type:` option was renamed `:task-type:`
