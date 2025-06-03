@@ -10,9 +10,9 @@ def _assert_class_task_nodes(nodes):
         name="MyTask",
         doc="""My task documentation""",
         task_type="class",
-        required_inputs="a, b, c",
-        optional_inputs="d, e",
-        outputs="error, result",
+        required_inputs=["a", "b", "c"],
+        optional_inputs=["d", "e"],
+        outputs=["error", "result"],
     )
 
 
@@ -22,9 +22,9 @@ def _assert_method_nodes(nodes):
         name="my_other_task",
         doc="""My other task documentation""",
         task_type="method",
-        required_inputs="f, g",
-        optional_inputs="h",
-        outputs="return_value",
+        required_inputs=["f", "g"],
+        optional_inputs=["h"],
+        outputs=["return_value"],
     )
 
     assert_task_nodes(
@@ -32,9 +32,9 @@ def _assert_method_nodes(nodes):
         name="run",
         doc="""Run task documentation""",
         task_type="method",
-        required_inputs="i",
-        optional_inputs="j, k",
-        outputs="return_value",
+        required_inputs=["i"],
+        optional_inputs=["j", "k"],
+        outputs=["return_value"],
     )
 
 
@@ -44,9 +44,9 @@ def _assert_ppfmethod_nodes(nodes):
         name="dummy_tasks",
         doc="""Run task documentation""",
         task_type="ppfmethod",
-        required_inputs="i",
-        optional_inputs="j, k",
-        outputs="return_value",
+        required_inputs=["i"],
+        optional_inputs=["j", "k"],
+        outputs=["return_value"],
     )
 
 
@@ -69,7 +69,7 @@ def test_ewokstasks_class(app):
         """,
     )
 
-    assert len(parsed_nodes) == 3
+    assert len(parsed_nodes) == 5
     _assert_class_task_nodes(parsed_nodes)
 
 
@@ -93,7 +93,7 @@ def test_ewokstasks_ppfmethod(app):
         """,
     )
 
-    assert len(parsed_nodes) == 3
+    assert len(parsed_nodes) == 5
     _assert_ppfmethod_nodes(parsed_nodes)
 
 
