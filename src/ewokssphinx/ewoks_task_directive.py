@@ -1,11 +1,11 @@
 import inspect
-from sphinx.util.docutils import SphinxDirective
+
 from docutils import nodes
 from docutils.parsers.rst import directives
 from ewokscore.task_discovery import discover_tasks_from_modules
+from sphinx.util.docutils import SphinxDirective
 
-
-from .utils import field
+from .utils import field, field_list
 
 
 def _task_type_option(argument):
@@ -45,31 +45,35 @@ class EwoksTaskDirective(SphinxDirective):
                     inspect.cleandoc(task["description"])
                 )
 
-            task_section += [
-                nodes.field_list(
+            task_section += nodes.field_list(
+                "",
+                nodes.field(
                     "",
-                    nodes.field(
+                    nodes.field_name(text="Identifier"),
+                    nodes.field_body(
                         "",
-                        nodes.field_name(text="Identifier"),
-                        nodes.field_body(
+                        nodes.paragraph(
                             "",
-                            nodes.paragraph(
-                                "",
-                                "",
-                                nodes.literal(text=task["task_identifier"]),
-                            ),
+                            "",
+                            nodes.literal(text=task["task_identifier"]),
                         ),
                     ),
-                    field("Task type", task["task_type"]),
-                    field(
-                        "Required inputs",
-                        ", ".join(task["required_input_names"]),
-                    ),
-                    field(
-                        "Optional inputs",
-                        ", ".join(task["optional_input_names"]),
-                    ),
-                    field("Outputs", ", ".join(task["output_names"])),
+                ),
+                field("Task type", task["task_type"]),
+            )
+            task_section += [
+                field_list(
+                    "Inputs",
+                    [
+                        *[
+                            (input, " [Required]")
+                            for input in task["required_input_names"]
+                        ],
+                        *[(input, "") for input in task["optional_input_names"]],
+                    ],
+                ),
+                field_list(
+                    "Outputs", [(output, "") for output in task["output_names"]]
                 ),
             ]
             results.append(task_section)

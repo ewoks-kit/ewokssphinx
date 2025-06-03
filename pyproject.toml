@@ -29,6 +29,7 @@ Changelog = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/-/blob/main/CHANG
 [project.optional-dependencies]
 test = ["pytest >=7"]
 dev = ["ewokssphinx[test]", "black >=25", "flake8 >=4"]
+doc = ["ewokssphinx[test]", "myst-parser", "pydata_sphinx_theme"]
 
 
 [tool.setuptools]
