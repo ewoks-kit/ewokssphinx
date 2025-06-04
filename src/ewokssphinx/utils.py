@@ -36,4 +36,5 @@ def field_list(
                 ),
             ),
         ),
+        classes=["ewokssphinx-field-list"],
     )
