@@ -5,7 +5,8 @@ from docutils.parsers.rst import directives
 from ewokscore.task_discovery import discover_tasks_from_modules
 from sphinx.util.docutils import SphinxDirective
 
-from .utils import field, field_list
+from .pydantic_utils import pydantic_inputs
+from .utils import field, get_task_name, simple_inputs, simple_outputs
 
 
 def _task_type_option(argument):
@@ -30,13 +31,9 @@ class EwoksTaskDirective(SphinxDirective):
             task_type=task_type,
             raise_import_failure=not ignore_import_error,
         ):
-            if task["task_type"] == "ppfmethod":
-                # ppfmethods are all named `run` so use the module name as task name.
-                task_name = task["task_identifier"].split(".")[-2]
-            else:
-                task_name = task["task_identifier"].split(".")[-1]
 
-            task_section = nodes.section(ids=[task_name])
+            task_name = get_task_name(task["task_identifier"], task["task_type"])
+            task_section = nodes.section(ids=[task_name], classes=["ewokssphinx-task"])
 
             task_section += nodes.title(text=task_name)
             if task["description"]:
@@ -47,34 +44,33 @@ class EwoksTaskDirective(SphinxDirective):
 
             task_section += nodes.field_list(
                 "",
-                nodes.field(
-                    "",
-                    nodes.field_name(text="Identifier"),
-                    nodes.field_body(
-                        "",
-                        nodes.paragraph(
-                            "",
-                            "",
-                            nodes.literal(text=task["task_identifier"]),
-                        ),
-                    ),
-                ),
-                field("Task type", task["task_type"]),
+                field("Identifier", nodes.literal(text=task["task_identifier"])),
+                field("Task type", nodes.Text(task["task_type"])),
             )
-            task_section += [
-                field_list(
-                    "Inputs",
-                    [
-                        *[
-                            (input, " [Required]")
-                            for input in task["required_input_names"]
-                        ],
-                        *[(input, "") for input in task["optional_input_names"]],
-                    ],
-                ),
-                field_list(
-                    "Outputs", [(output, "") for output in task["output_names"]]
-                ),
-            ]
+
+            # Force the field list to be compound so that Sphinx does not attach the "simple" CSS class
+            io_definition = nodes.container(
+                "",
+            )
+
+            input_model = task.get("input_model")
+            if input_model is None:
+                io_definition.append(
+                    simple_inputs(
+                        required_input_names=task["required_input_names"],
+                        optional_input_names=task["optional_input_names"],
+                    )
+                )
+            else:
+                io_definition.append(pydantic_inputs(input_model))
+
+            io_definition.append(simple_outputs(outputs=task["output_names"]))
+
+            task_section.append(
+                nodes.definition_list(
+                    "", io_definition, classes=["ewokssphinx-field-list"]
+                )
+            )
+
             results.append(task_section)
         return results

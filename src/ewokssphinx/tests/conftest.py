@@ -4,6 +4,8 @@ from docutils import nodes
 import pytest
 from sphinx.testing.util import SphinxTestApp
 
+from ewokssphinx.utils import get_task_name
+
 
 @pytest.fixture(scope="session")
 def app(tmp_path_factory):
@@ -27,56 +29,54 @@ def assert_field_node(node, name: str, value: str):
     assert_node(node[1], nodes.field_body, value)
 
 
-def assert_inputs(node, required_inputs, optional_inputs):
-    assert_node(node[0], nodes.field_name, "Inputs")
-    assert_node(node[1][0], nodes.bullet_list)
+def assert_simple_inputs(input_list, required_inputs, optional_inputs):
+    input_term, input_definition = input_list
+    assert_node(input_term, nodes.term, "Inputs:")
+    assert_node(input_definition, nodes.definition)
 
     n_required = len(required_inputs)
     for i in range(n_required):
-        assert_node(
-            node[1][0][i], nodes.list_item, f"{required_inputs[i]}\n\n [Required]"
-        )
+        assert_node(input_definition[0][i][0], nodes.term, f"{required_inputs[i]}*")
 
     n_optional = len(optional_inputs)
     for i in range(n_optional):
         assert_node(
-            node[1][0][n_required + i], nodes.list_item, f"{optional_inputs[i]}\n\n"
+            input_definition[0][n_required + i][0], nodes.term, optional_inputs[i]
         )
 
 
-def assert_outputs(node, outputs):
-    assert_node(node[0], nodes.field_name, "Outputs")
-    assert_node(node[1][0], nodes.bullet_list)
-    for i, node_item in enumerate(node[1][0]):
-        assert_node(node_item, nodes.list_item, f"{outputs[i]}\n\n")
+def assert_simple_outputs(output_list, outputs):
+    output_term, output_definition = output_list
+    assert_node(output_term, nodes.term, "Outputs:")
+    assert_node(output_definition, nodes.definition)
+
+    for i, output_name in enumerate(outputs):
+        assert_node(output_definition[0][i][0], nodes.term, output_name)
 
 
 def assert_task_nodes(
-    parsed_nodes, name, doc, task_type, required_inputs, optional_inputs, outputs
+    parsed_nodes, identifier, doc, task_type, required_inputs, optional_inputs, outputs
 ):
+    assert_task_preamble(parsed_nodes, identifier, doc, task_type)
+    definition_list_node = parsed_nodes[-1]
+    container_node = definition_list_node[0]
+    input_list = container_node[0]
+    assert_simple_inputs(
+        input_list,
+        required_inputs=required_inputs,
+        optional_inputs=optional_inputs,
+    )
+    output_list = container_node[1]
+    assert_simple_outputs(output_list, outputs=outputs)
+
+
+def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
+    name = get_task_name(identifier, task_type)
     assert_node(parsed_nodes[0], nodes.title, name)
-    if doc is not None:
-        assert_node(parsed_nodes[1], nodes.paragraph, doc)
-        next_nodes = parsed_nodes[2:]
-    else:
-        next_nodes = parsed_nodes[1:]
-    field_list_nodes = next_nodes[0]
+    assert doc is not None
+    assert_node(parsed_nodes[1], nodes.paragraph, doc)
+
+    field_list_nodes = parsed_nodes[2]
     assert_node(field_list_nodes, nodes.field_list)
-    assert_field_node(
-        field_list_nodes[0],
-        name="Identifier",
-        value=(
-            "ewokssphinx.tests.dummy_tasks.run"
-            if task_type == "ppfmethod"
-            else f"ewokssphinx.tests.dummy_tasks.{name}"
-        ),
-    )
-    assert_field_node(
-        field_list_nodes[1],
-        name="Task type",
-        value=task_type,
-    )
-    assert_inputs(
-        next_nodes[1], required_inputs=required_inputs, optional_inputs=optional_inputs
-    )
-    assert_outputs(next_nodes[2], outputs=outputs)
+    assert_field_node(field_list_nodes[0], name="Identifier", value=identifier)
+    assert_field_node(field_list_nodes[1], name="Task type", value=task_type)

@@ -7,7 +7,7 @@ from .conftest import assert_task_nodes
 def _assert_class_task_nodes(nodes):
     assert_task_nodes(
         nodes,
-        name="MyTask",
+        identifier="ewokssphinx.tests.dummy_tasks.MyTask",
         doc="""My task documentation""",
         task_type="class",
         required_inputs=["a", "b", "c"],
@@ -19,7 +19,7 @@ def _assert_class_task_nodes(nodes):
 def _assert_method_nodes(nodes):
     assert_task_nodes(
         nodes[0],
-        name="my_other_task",
+        identifier="ewokssphinx.tests.dummy_tasks.my_other_task",
         doc="""My other task documentation""",
         task_type="method",
         required_inputs=["f", "g"],
@@ -29,7 +29,7 @@ def _assert_method_nodes(nodes):
 
     assert_task_nodes(
         nodes[1],
-        name="run",
+        identifier="ewokssphinx.tests.dummy_tasks.run",
         doc="""Run task documentation""",
         task_type="method",
         required_inputs=["i"],
@@ -41,7 +41,7 @@ def _assert_method_nodes(nodes):
 def _assert_ppfmethod_nodes(nodes):
     assert_task_nodes(
         nodes,
-        name="dummy_tasks",
+        identifier="ewokssphinx.tests.dummy_tasks.run",
         doc="""Run task documentation""",
         task_type="ppfmethod",
         required_inputs=["i"],
@@ -69,7 +69,7 @@ def test_ewokstasks_class(app):
         """,
     )
 
-    assert len(parsed_nodes) == 5
+    assert len(parsed_nodes) == 4
     _assert_class_task_nodes(parsed_nodes)
 
 
@@ -93,7 +93,7 @@ def test_ewokstasks_ppfmethod(app):
         """,
     )
 
-    assert len(parsed_nodes) == 5
+    assert len(parsed_nodes) == 4
     _assert_ppfmethod_nodes(parsed_nodes)
 
 
