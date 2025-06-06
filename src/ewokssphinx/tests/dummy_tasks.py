@@ -14,8 +14,6 @@ class MyTask(
 
 
 def my_other_task(f, g, h=None):
-    """My other task documentation"""
-
     pass
 
 
