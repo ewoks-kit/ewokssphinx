@@ -71,3 +71,9 @@ It is also possible to give a pattern for recursive generation. For example, The
     .. ewokstasks:: ewoksxrpd.tasks.integrate
         :ignore-import-error:
     ```
+
+- `:keep-input-model-order:`
+
+    Shows the input fields in the order they are declared in the [Pydantic input model](https://ewoks.readthedocs.io/en/latest/howtoguides/task_inputs.html#input-model). 
+    
+    By default, `ewokstasks` shows the required fields first.

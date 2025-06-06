@@ -33,3 +33,24 @@ def test_ewokstasks_with_pydantic_input_model(app):
 
     output_list = container_node[1]
     assert_simple_outputs(output_list, outputs=["error", "location"])
+
+
+def test_ewokstasks_keep_input_model_order(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks_pydantic
+              :task-type: class
+              :keep-input-model-order:
+        """,
+    )
+
+    assert len(parsed_nodes) == 4
+    definition_list_node = parsed_nodes[-1]
+    container_node = definition_list_node[0]
+    input_list = container_node[0]
+    input_definition = input_list[1]
+
+    assert_node(input_definition, nodes.definition)
+    assert_node(input_definition[0][0][0], nodes.term, "planet : str= Earth")
+    assert_node(input_definition[0][1][0], nodes.term, "latitude* : int")
+    assert_node(input_definition[0][2][0], nodes.term, "longitude* : float")

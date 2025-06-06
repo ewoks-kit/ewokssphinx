@@ -18,6 +18,7 @@ class EwoksTaskDirective(SphinxDirective):
     option_spec = {
         "task-type": _task_type_option,
         "ignore-import-error": directives.flag,
+        "keep-input-model-order": directives.flag,
     }
 
     def run(self):
@@ -62,7 +63,12 @@ class EwoksTaskDirective(SphinxDirective):
                     )
                 )
             else:
-                io_definition.append(pydantic_inputs(input_model))
+                io_definition.append(
+                    pydantic_inputs(
+                        input_model,
+                        keep_order="keep-input-model-order" in self.options,
+                    )
+                )
 
             io_definition.append(simple_outputs(outputs=task["output_names"]))
 
