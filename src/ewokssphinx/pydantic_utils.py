@@ -1,5 +1,4 @@
 import importlib
-from typing import Type
 
 from docutils import nodes
 from ewokscore.model import BaseInputModel
@@ -9,7 +8,7 @@ from sphinx.util.typing import stringify_annotation
 from .utils import field_term
 
 
-def _import_model(input_model_qual_name: str) -> Type[BaseInputModel]:
+def _import_model(input_model_qual_name: str) -> type[BaseInputModel]:
     module_name, _, model_name = input_model_qual_name.rpartition(".")
 
     mod = importlib.import_module(module_name)
