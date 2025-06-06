@@ -1,8 +1,14 @@
 # CHANGELOG.md
 
+## 1.0.0
+
+- **⚠️ Breaking change:** Python 3.8 support was dropped
+- ✨ Add rich display of inputs `ewokstasks` directive when specified with a pydantic model: type annotation, description and examples
+- ✨ `ewokstasks` directive now displays inputs and outputs as lists rather than on a single line
+
 ## 0.4.0
 
-- ✨ When rendered by the `ewokstasks` directive, the name of `ppfmethod` tasks are now the module name instead of the ambiguous `run` function name.
+- ✨ When rendered by the `ewokstasks` directive, the name of `ppfmethod` tasks are now the module name instead of the ambiguous `run` function name
 
 ## 0.3.0
 
@@ -12,7 +18,7 @@
 
 ## 0.2.0
 
-- ✨ Task descriptions are now parsed with RST rather than stringified.
+- ✨ Task descriptions are now parsed with RST rather than stringified
 - ✨ `ewokstasks` directive now generates documentation for all task types (`class`, `method` and `ppfmethod`).
 - ✨ New `:task_type:` option for `ewokstasks` to generate documentation for only one task type
 - 🐛 Fix inconsistent order of class task input and output fields
