@@ -11,6 +11,12 @@ build_sdist:
 test_sdist-3.13:
   extends: .test_sdist-3.13
 
+build_doc:
+  extends: .build_doc
+
+pages:
+  extends: .pages
+
 assets:
   extends: .assets
 
