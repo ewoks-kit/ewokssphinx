@@ -1,4 +1,5 @@
 import importlib
+from typing import Type
 
 from docutils import nodes
 from ewokscore.model import BaseInputModel
@@ -8,7 +9,7 @@ from sphinx.util.typing import stringify_annotation
 from .utils import field_term
 
 
-def _import_model(input_model_qual_name: str) -> BaseInputModel:
+def _import_model(input_model_qual_name: str) -> Type[BaseInputModel]:
     module_name, _, model_name = input_model_qual_name.rpartition(".")
 
     mod = importlib.import_module(module_name)
@@ -21,9 +22,7 @@ def _pydantic_field_term(name: str, field_info: FieldInfo) -> nodes.term:
 
     if field_info.annotation is not None:
         node_term += [
-            nodes.Text(
-                " : ",
-            ),
+            nodes.Text(" : "),
             nodes.literal(text=stringify_annotation(field_info.annotation)),
         ]
 

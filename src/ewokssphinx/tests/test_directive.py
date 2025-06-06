@@ -20,7 +20,7 @@ def _assert_method_nodes(nodes):
     assert_task_nodes(
         nodes[0],
         identifier="ewokssphinx.tests.dummy_tasks.my_other_task",
-        doc="""My other task documentation""",
+        doc=None,
         task_type="method",
         required_inputs=["f", "g"],
         optional_inputs=["h"],

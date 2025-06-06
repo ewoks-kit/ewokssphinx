@@ -12,7 +12,9 @@ def app(tmp_path_factory):
     srcdir = tmp_path_factory.mktemp("root")
     with open(srcdir / "conf.py", "w") as conf:
         conf.write('extensions = ["ewokssphinx"]')
-    app = SphinxTestApp("html", srcdir=srcdir)
+    app = SphinxTestApp(
+        "html", srcdir=srcdir, docutils_conf="[readers]\ndocinfo_xform: no"
+    )
 
     return app
 
@@ -73,10 +75,11 @@ def assert_task_nodes(
 def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
     name = get_task_name(identifier, task_type)
     assert_node(parsed_nodes[0], nodes.title, name)
-    assert doc is not None
-    assert_node(parsed_nodes[1], nodes.paragraph, doc)
-
-    field_list_nodes = parsed_nodes[2]
+    if doc is not None:
+        assert_node(parsed_nodes[1], nodes.paragraph, doc)
+        field_list_nodes = parsed_nodes[2]
+    else:
+        field_list_nodes = parsed_nodes[1]
     assert_node(field_list_nodes, nodes.field_list)
     assert_field_node(field_list_nodes[0], name="Identifier", value=identifier)
     assert_field_node(field_list_nodes[1], name="Task type", value=task_type)
