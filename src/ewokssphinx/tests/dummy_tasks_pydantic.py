@@ -4,11 +4,11 @@ from pydantic import Field
 
 
 class Inputs(BaseInputModel):
+    planet: str = "Earth"
     latitude: int = Field(examples=[-90, 0, 90])
     longitude: float = Field(
         description="Longitude of the GPS point. In degrees.", examples=[-90, 0, 90]
     )
-    planet: str = "Earth"
 
 
 class FindLocation(

@@ -59,8 +59,15 @@ def _pydantic_field_definition(field_info: FieldInfo) -> nodes.definition:
 def pydantic_inputs(input_model_qual_name: str) -> nodes.definition_list_item:
     model = _import_model(input_model_qual_name)
 
+    field_names = sorted(
+        model.model_fields.keys(),
+        key=lambda name: model.model_fields[name].is_required(),
+        reverse=True,
+    )
+
     input_definition_list = nodes.definition_list()
-    for field_name, field_info in model.model_fields.items():
+    for field_name in field_names:
+        field_info = model.model_fields[field_name]
         input_definition_list.append(
             nodes.definition_list_item(
                 "",
