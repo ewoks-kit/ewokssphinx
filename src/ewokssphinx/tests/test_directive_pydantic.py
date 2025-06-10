@@ -31,5 +31,10 @@ def test_ewokstasks_with_pydantic_input_model(app):
     assert_node(input_definition[0][1][0], nodes.term, "longitude* : float")
     assert_node(input_definition[0][2][0], nodes.term, "planet : str= Earth")
 
+    longitude_definition = input_definition[0][1][1]
+    assert_node(longitude_definition, nodes.definition)
+    assert_node(longitude_definition[0][0], nodes.Text, "Longitude of the GPS point. ")
+    assert_node(longitude_definition[0][1], nodes.strong, "In degrees.")
+
     output_list = container_node[1]
     assert_simple_outputs(output_list, outputs=["error", "location"])

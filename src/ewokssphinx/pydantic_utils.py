@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import importlib
+from typing import Any, Callable
 
 from docutils import nodes
+from docutils.nodes import Node
 from ewokscore.model import BaseInputModel
 from pydantic.fields import FieldInfo
 from sphinx.util.typing import stringify_annotation
@@ -35,28 +39,22 @@ def _pydantic_field_term(name: str, field_info: FieldInfo) -> nodes.term:
     return node_term
 
 
-def _pydantic_field_definition(field_info: FieldInfo) -> nodes.definition:
-    node_definition = nodes.definition()
-    if field_info.description is not None:
-        node_definition.append(nodes.Text(field_info.description))
+def _example_list(examples: list[Any]) -> nodes.container:
+    example_list = nodes.bullet_list()
+    for example in examples:
+        example_list.append(nodes.list_item("", nodes.Text(repr(example))))
 
-    if field_info.examples:
-        example_list = nodes.bullet_list()
-        for example in field_info.examples:
-            example_list.append(nodes.list_item("", nodes.Text(repr(example))))
-        node_definition.append(
-            nodes.container(
-                "",
-                nodes.Text("Examples:"),
-                example_list,
-                classes=["ewokssphinx-examples"],
-            )
-        )
-
-    return node_definition
+    return nodes.container(
+        "",
+        nodes.Text("Examples:"),
+        example_list,
+        classes=["ewokssphinx-examples"],
+    )
 
 
-def pydantic_inputs(input_model_qual_name: str) -> nodes.definition_list_item:
+def pydantic_inputs(
+    input_model_qual_name: str, parse_doc: Callable[[str], list[Node]]
+) -> nodes.definition_list_item:
     model = _import_model(input_model_qual_name)
 
     field_names = sorted(
@@ -68,11 +66,19 @@ def pydantic_inputs(input_model_qual_name: str) -> nodes.definition_list_item:
     input_definition_list = nodes.definition_list()
     for field_name in field_names:
         field_info = model.model_fields[field_name]
+
+        node_definition = nodes.definition()
+        if field_info.description is not None:
+            node_definition += parse_doc(field_info.description)
+
+        if field_info.examples:
+            node_definition.append(_example_list(field_info.examples))
+
         input_definition_list.append(
             nodes.definition_list_item(
                 "",
                 _pydantic_field_term(field_name, field_info),
-                _pydantic_field_definition(field_info),
+                node_definition,
             )
         )
 

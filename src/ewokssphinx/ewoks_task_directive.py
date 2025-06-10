@@ -1,6 +1,7 @@
 import inspect
 
 from docutils import nodes
+from docutils.nodes import Node
 from docutils.parsers.rst import directives
 from ewokscore.task_discovery import discover_tasks_from_modules
 from sphinx.util.docutils import SphinxDirective
@@ -25,6 +26,10 @@ class EwoksTaskDirective(SphinxDirective):
         task_type = self.options.get("task-type")
         ignore_import_error = "ignore-import-error" in self.options
 
+        def parse_doc(text) -> list[Node]:
+            # Clean up indentation from docstrings so that Sphinx properly parses them
+            return self.parse_text_to_nodes(inspect.cleandoc(text))
+
         results = []
         for task in discover_tasks_from_modules(
             module_pattern,
@@ -37,10 +42,7 @@ class EwoksTaskDirective(SphinxDirective):
 
             task_section += nodes.title(text=task_name)
             if task["description"]:
-                task_section += self.parse_text_to_nodes(
-                    # Clean up indentation from docstrings so that Sphinx properly parses them
-                    inspect.cleandoc(task["description"])
-                )
+                task_section += parse_doc(task["description"])
 
             task_section += nodes.field_list(
                 "",
@@ -62,7 +64,7 @@ class EwoksTaskDirective(SphinxDirective):
                     )
                 )
             else:
-                io_definition.append(pydantic_inputs(input_model))
+                io_definition.append(pydantic_inputs(input_model, parse_doc=parse_doc))
 
             io_definition.append(simple_outputs(outputs=task["output_names"]))
 
