@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ewokssphinx"
-version = "1.0.0-rc0"
+version = "1.0.0-rc1"
 keywords = ['ewoks', 'sphinx']
 authors = [{ name = "ESRF", email = "dau-pydev@esrf.fr" }]
 description = "Ewoks Sphinx directives"
