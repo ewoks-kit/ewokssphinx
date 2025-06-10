@@ -1,7 +1,8 @@
 from typing import Optional, Type
-from docutils.nodes import Node
-from docutils import nodes
+
 import pytest
+from docutils import nodes
+from docutils.nodes import Node
 from sphinx.testing.util import SphinxTestApp
 
 from ewokssphinx.utils import get_task_name
