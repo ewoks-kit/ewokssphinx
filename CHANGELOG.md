@@ -1,8 +1,8 @@
-# CHANGELOG.md
+# CHANGELOG
 
 ## 1.0.0
 
-- **⚠️ Breaking change:** Python 3.8 support was dropped
+- **⚠️ Breaking change:** Python 3.8 was dropped
 - ✨ Add rich display of inputs `ewokstasks` directive when specified with a pydantic model: type annotation, description and examples
 - ✨ `ewokstasks` directive now displays inputs and outputs as lists rather than on a single line
 

@@ -6,7 +6,7 @@ version = ".".join(release.split(".")[:2])
 copyright = "2025, ESRF"
 author = "ESRF"
 
-extensions = ["myst_parser", "ewokssphinx"]
+extensions = ["myst_parser", "sphinx_design", "ewokssphinx"]
 
 myst_enable_extensions = ["colon_fence", "substitution"]
 myst_substitutions = {"version": version}
