@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Type
 
 import pytest
 from docutils import nodes
@@ -20,7 +20,7 @@ def app(tmp_path_factory):
     return app
 
 
-def assert_node(node, cls: Type[Node], text: Optional[str] = None):
+def assert_node(node, cls: Type[Node], text: str | None = None):
     assert isinstance(node, cls)
     if text is not None:
         assert node.astext() == text
