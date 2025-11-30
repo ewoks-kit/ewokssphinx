@@ -17,7 +17,11 @@ classifiers = [
     "Framework :: Sphinx :: Extension",
 ]
 requires-python = ">=3.10"
-dependencies = ["sphinx", "ewokscore >= 1.5.0"]
+dependencies = [
+    "sphinx",
+    "ewokscore >= 3.1.0",
+    "pydantic",
+]
 
 [project.urls]
 Homepage = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/"
@@ -27,8 +31,14 @@ Issues = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/issues"
 Changelog = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/-/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-test = ["pytest >=7"]
-dev = ["ewokssphinx[test]", "black >=25", "flake8 >=4"]
+test = [
+    "pytest >=7",
+]
+dev = [
+    "ewokssphinx[test]",
+    "black >=25",
+    "flake8 >=4",
+]
 doc = [
     "ewokssphinx[test]",
     "myst-parser",
@@ -48,3 +58,7 @@ ewokssphinx = ["*.css"]
 
 [tool.coverage.run]
 omit = ['*/tests/*']
+
+[tool.isort]
+profile = "black"
+force_single_line = "True"

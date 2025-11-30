@@ -1,11 +1,13 @@
-import os
-import json
+import logging
 
 from docutils.parsers.rst import directives
 from sphinx.util.docutils import SphinxDirective
 
-from .ewoks_utils import discover_tasks
-from .sphinx_utils import task_nodes
+from .ewoks_task_utils import cached_tasks
+from .ewoks_task_utils import discover_tasks
+from .sphinx_task_utils import task_nodes
+
+logger = logging.getLogger(__name__)
 
 
 def _task_type_option(argument):
@@ -24,10 +26,17 @@ class EwoksTaskDirective(SphinxDirective):
         task_type = self.options.get("task-type")
         ignore_import_error = "ignore-import-error" in self.options
 
-        tasks = discover_tasks(module_pattern, task_type, ignore_import_error)
+        try:
+            local_tasks = discover_tasks(module_pattern, task_type, ignore_import_error)
+        except Exception as ex:
+            if not self.config.ewokssphinx_ignore_discovery_error:
+                raise
+            logger.error(f"Task discovery '{module_pattern}' failed: {ex}")
+            local_tasks = []
 
-        filename = os.environ["EWOKSSPHINX_JSON_PATH"]
+        tasks = cached_tasks(
+            local_tasks, self.config.ewokssphinx_json_path, module_pattern, task_type
+        )
 
-        nodes = task_nodes(self, list(tasks.values()))
-
-        return nodes
+        task_sections = task_nodes(self, tasks)
+        return task_sections
