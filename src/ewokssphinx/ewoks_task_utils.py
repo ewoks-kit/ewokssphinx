@@ -6,7 +6,10 @@ from typing import Any
 
 from ewokscore.task_discovery import discover_tasks_from_modules
 from pydantic import BaseModel
+from pydantic_core import PydanticUndefined
 from sphinx.util.typing import stringify_annotation
+
+from .type_utils import TaskDescription
 
 
 def discover_tasks(
@@ -20,20 +23,27 @@ def discover_tasks(
     ):
         task_name = _get_task_name(task["task_identifier"], task["task_type"])
 
-        inputs = _parse_pydantic_model(task.get("input_model"))
-        outputs = _parse_pydantic_model(task.get("output_model"))
+        if task.get("input_model"):
+            inputs = _parse_pydantic_model(task["input_model"])
+        else:
+            inputs = _parse_parameter_names(
+                task.get("required_input_names", []),
+                task.get("optional_input_names", []),
+            )
+        if task.get("output_model"):
+            outputs = _parse_pydantic_model(task["output_model"])
+        else:
+            outputs = _parse_parameter_names(task.get("output_names", []), [])
 
         serialized_task = {
             "task_name": task_name,
             "task_identifier": task["task_identifier"],
             "task_type": task["task_type"],
             "description": _parse_doc(task.get("description")),
-            "required_input_names": task.get("required_input_names", []),
-            "optional_input_names": task.get("optional_input_names", []),
-            "output_names": task.get("output_names", []),
             "inputs": inputs,
             "outputs": outputs,
         }
+        _ = TaskDescription(**serialized_task)
 
         tasks.append(serialized_task)
     return tasks
@@ -72,6 +82,26 @@ def _get_task_name(identifier: str, task_type: str) -> str:
     return identifier.split(".")[-1]
 
 
+def _parse_parameter_names(
+    required_names: list[str], optional_names: list[str]
+) -> list[dict[str, str | list[str]]]:
+    parameters = []
+    names = required_names + optional_names
+    is_required = [True] * len(required_names) + [False] * len(optional_names)
+    for name, required in zip(names, is_required):
+        parameter = {
+            "name": name,
+            "annotation": None,
+            "required": required,
+            "description": None,
+            "examples": [],
+            "default": None,
+            "has_default": False,
+        }
+        parameters.append(parameter)
+    return parameters
+
+
 def _parse_pydantic_model(model: BaseModel | None) -> list[dict[str, str | list[str]]]:
     parameters = []
     if model is None:
@@ -96,6 +126,11 @@ def _parse_doc(text) -> str:
 def _parse_pydantic_field(name, field_info) -> dict[str, str | list[str] | None]:
     examples = getattr(field_info, "examples", None)
     default = getattr(field_info, "default", None)
+    if default is PydanticUndefined:
+        default = None
+        has_default = False
+    else:
+        has_default = True
     examples = [repr(example) for example in examples or []]
 
     return {
@@ -105,4 +140,5 @@ def _parse_pydantic_field(name, field_info) -> dict[str, str | list[str] | None]
         "description": _parse_doc(field_info.description),
         "examples": examples,
         "default": None if default is None else str(default),
+        "has_default": has_default,
     }

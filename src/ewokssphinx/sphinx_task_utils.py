@@ -4,6 +4,8 @@ from typing import Sequence
 from docutils import nodes
 from sphinx.util.docutils import SphinxDirective
 
+from .type_utils import TaskDescription
+
 
 def task_nodes(
     directive: SphinxDirective,
@@ -19,6 +21,8 @@ def task_nodes(
 
 
 def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.section:
+    _ = TaskDescription(**task)
+
     section = nodes.section(
         "",
         ids=[task["task_identifier"]],
@@ -41,8 +45,10 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
         )
     )
 
+    # Combine inputs + outputs in a container so that
+    # Sphinx does not attach the "simple" CSS class.
+    io_def = nodes.container("")
     if task["inputs"]:
-        # Detailed pydantic-style input definitions
         input_parameters = _parameter_nodes(
             directive,
             title="Inputs:",
@@ -50,17 +56,9 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
             parameters=task["inputs"],
             is_outputs=False,
         )
-    else:
-        # Simple inputs from name lists
-        input_parameters = _parameter_nodes_only_names(
-            title="Inputs:",
-            css_classes=["field-odd"],
-            required_names=task.get("required_input_names", []),
-            optional_names=task.get("optional_input_names", []),
-        )
+        io_def.append(input_parameters)
 
     if task["outputs"]:
-        # Detailed pydantic-style output definitions
         output_parameters = _parameter_nodes(
             directive,
             title="Outputs:",
@@ -68,20 +66,7 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
             parameters=task["outputs"],
             is_outputs=True,
         )
-    else:
-        # Simple outputs from name lists
-        output_parameters = _parameter_nodes_only_names(
-            title="Outputs:",
-            css_classes=["field-even"],
-            required_names=[],  # outputs are never “required”
-            optional_names=task.get("output_names", []),
-        )
-
-    # Combine inputs + outputs in a container so that
-    # Sphinx does not attach the "simple" CSS class.
-    io_def = nodes.container("")
-    io_def.append(input_parameters)
-    io_def.append(output_parameters)
+        io_def.append(output_parameters)
 
     section.append(
         nodes.definition_list(
@@ -118,43 +103,6 @@ def _term_node(name: str, is_required: bool) -> nodes.term:
         "",
         name,
         nodes.strong("", "*", classes=["ewokssphinx-required"]),
-    )
-
-
-def _parameter_nodes_only_names(
-    title: str,
-    css_classes: list[str],
-    required_names: Sequence[str],
-    optional_names: Sequence[str],
-) -> nodes.definition_list_item:
-
-    dl = nodes.definition_list()
-
-    # Required items
-    for name in required_names:
-        dl.append(
-            nodes.definition_list_item(
-                "",
-                _term_node(name, True),
-                nodes.definition(),
-            )
-        )
-
-    # Optional items
-    for name in optional_names:
-        dl.append(
-            nodes.definition_list_item(
-                "",
-                _term_node(name, False),
-                nodes.definition(),
-            )
-        )
-
-    return nodes.definition_list_item(
-        "",
-        nodes.term(text=title, classes=css_classes),
-        nodes.definition("", dl),
-        classes=["field-list"],
     )
 
 
@@ -202,7 +150,9 @@ def _parameter_node(
     if parameter["annotation"]:
         term.extend([nodes.Text(" : "), nodes.literal(text=parameter["annotation"])])
 
-    has_default = not parameter["required"] and not is_output
+    has_default = (
+        parameter["has_default"] and not parameter["required"] and not is_output
+    )
     if has_default:
         term.append(
             nodes.literal(
