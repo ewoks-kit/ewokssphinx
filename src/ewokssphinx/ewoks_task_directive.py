@@ -35,7 +35,10 @@ class EwoksTaskDirective(SphinxDirective):
             local_tasks = []
 
         tasks = cached_tasks(
-            local_tasks, self.config.ewokssphinx_json_path, module_pattern, task_type
+            local_tasks,
+            self.config.ewokssphinx_task_cache_path,
+            module_pattern,
+            task_type,
         )
 
         task_sections = task_nodes(self, tasks)

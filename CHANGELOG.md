@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New Sphinx directive setup option `ewokssphinx_json_path`: Ewoks task caching
-- New Sphinx directive setup option `ewokssphinx_ignore_discovery_error`: Ignore task discovery errors
+- New Sphinx directive setup option `ewokssphinx_task_cache_path`: Ewoks task caching.
+- New Sphinx directive setup option `ewokssphinx_ignore_discovery_error`: Ignore task discovery errors.
 
 ### Changed
 

@@ -10,7 +10,7 @@ def setup(app: Sphinx):
     app.add_directive("ewokstasks", EwoksTaskDirective)
 
     app.add_config_value(
-        "ewokssphinx_json_path",
+        "ewokssphinx_task_cache_path",
         default=None,
         types=str,
         rebuild="env",

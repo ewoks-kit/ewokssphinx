@@ -22,7 +22,7 @@ def app_with_cache(tmp_path_factory):
     json_cache_path = srcdir / "discovered_ewoks_tasks.json"
     with open(srcdir / "conf.py", "w") as conf:
         conf.write('extensions = ["ewokssphinx"]\n')
-        conf.write(f'ewokssphinx_json_path = "{json_cache_path}"\n')
+        conf.write(f'ewokssphinx_task_cache_path = "{json_cache_path}"\n')
         conf.write("ewokssphinx_ignore_discovery_error = True\n")
 
     task = {
