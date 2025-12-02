@@ -1,13 +1,13 @@
-import inspect
+import logging
 
-from docutils import nodes
-from docutils.nodes import Node
 from docutils.parsers.rst import directives
-from ewokscore.task_discovery import discover_tasks_from_modules
 from sphinx.util.docutils import SphinxDirective
 
-from .pydantic_utils import pydantic_inputs
-from .utils import field, get_task_name, simple_inputs, simple_outputs
+from .ewoks_task_utils import cached_tasks
+from .ewoks_task_utils import discover_tasks
+from .sphinx_task_utils import task_nodes
+
+logger = logging.getLogger(__name__)
 
 
 def _task_type_option(argument):
@@ -26,53 +26,20 @@ class EwoksTaskDirective(SphinxDirective):
         task_type = self.options.get("task-type")
         ignore_import_error = "ignore-import-error" in self.options
 
-        def parse_doc(text) -> list[Node]:
-            # Clean up indentation from docstrings so that Sphinx properly parses them
-            return self.parse_text_to_nodes(inspect.cleandoc(text))
+        try:
+            local_tasks = discover_tasks(module_pattern, task_type, ignore_import_error)
+        except Exception as ex:
+            if not self.config.ewokssphinx_ignore_discovery_error:
+                raise
+            logger.error(f"Task discovery '{module_pattern}' failed: {ex}")
+            local_tasks = []
 
-        results = []
-        for task in discover_tasks_from_modules(
+        tasks = cached_tasks(
+            local_tasks,
+            self.config.ewokssphinx_task_cache_path,
             module_pattern,
-            task_type=task_type,
-            raise_import_failure=not ignore_import_error,
-        ):
+            task_type,
+        )
 
-            task_name = get_task_name(task["task_identifier"], task["task_type"])
-            task_section = nodes.section(ids=[task_name], classes=["ewokssphinx-task"])
-
-            task_section += nodes.title(text=task_name)
-            if task["description"]:
-                task_section += parse_doc(task["description"])
-
-            task_section += nodes.field_list(
-                "",
-                field("Identifier", nodes.literal(text=task["task_identifier"])),
-                field("Task type", nodes.Text(task["task_type"])),
-            )
-
-            # Force the field list to be compound so that Sphinx does not attach the "simple" CSS class
-            io_definition = nodes.container(
-                "",
-            )
-
-            input_model = task.get("input_model")
-            if input_model is None:
-                io_definition.append(
-                    simple_inputs(
-                        required_input_names=task["required_input_names"],
-                        optional_input_names=task["optional_input_names"],
-                    )
-                )
-            else:
-                io_definition.append(pydantic_inputs(input_model, parse_doc=parse_doc))
-
-            io_definition.append(simple_outputs(outputs=task["output_names"]))
-
-            task_section.append(
-                nodes.definition_list(
-                    "", io_definition, classes=["ewokssphinx-field-list"]
-                )
-            )
-
-            results.append(task_section)
-        return results
+        task_sections = task_nodes(self, tasks)
+        return task_sections
