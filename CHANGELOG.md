@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2025-12-02
+
 ### Added
 
 - New Sphinx directive setup option `ewokssphinx_task_cache_path`: Ewoks task caching.
@@ -77,7 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `ewokstasks` directive.
 
-[unreleased]: https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/compare/v1.0.0...HEAD
+[unreleased]: https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/compare/v2.0.0...HEAD
+[2.0.0]: https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/compare/v1.0.0...v2.0.0
 [1.0.0]: https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/compare/v0.4.0...v1.0.0
 [0.4.0]: https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/compare/v0.3.0...v0.4.0
 [0.3.0]: https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/compare/v0.2.0...v0.3.0
