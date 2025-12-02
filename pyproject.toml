@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ewokssphinx"
-version = "1.0.0"
+version = "2.0.0"
 keywords = ['ewoks', 'sphinx']
 authors = [{ name = "ESRF", email = "dau-pydev@esrf.fr" }]
 description = "Ewoks Sphinx directives"
@@ -19,7 +19,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "sphinx",
-    "ewokscore >= 3.1.0",
+    "ewokscore >=3.1.0",
     "pydantic",
 ]
 
