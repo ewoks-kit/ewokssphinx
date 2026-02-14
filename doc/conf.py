@@ -3,7 +3,7 @@ import importlib.metadata
 project = "ewokssphinx"
 release = importlib.metadata.version(project)
 version = ".".join(release.split(".")[:2])
-copyright = "2025, ESRF"
+copyright = "2026, ESRF"
 author = "ESRF"
 
 extensions = ["myst_parser", "sphinx_design", "ewokssphinx"]
@@ -15,9 +15,9 @@ html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "icon_links": [
         {
-            "name": "gitlab",
-            "url": "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx",
-            "icon": "fa-brands fa-gitlab",
+            "name": "github",
+            "url": "https://github.com/ewoks-kit/ewokssphinx",
+            "icon": "fa-brands fa-github",
         },
         {
             "name": "pypi",

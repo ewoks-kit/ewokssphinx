@@ -24,11 +24,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/"
-Documentation = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/-/blob/main/README.md"
-Repository = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/"
-Issues = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/issues"
-Changelog = "https://gitlab.esrf.fr/workflow/ewoks/ewokssphinx/-/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/ewoks-kit/ewokssphinx/"
+Documentation = "https://github.com/ewoks-kit/ewokssphinx/blob/main/README.md"
+Repository = "https://github.com/ewoks-kit/ewokssphinx/"
+Issues = "https://github.com/ewoks-kit/ewokssphinx/issues"
+Changelog = "https://github.com/ewoks-kit/ewokssphinx/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 test = [
