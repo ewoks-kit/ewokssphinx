@@ -3,6 +3,7 @@
 !.gitignore
 !.readthedocs.yaml
 !.flake8
+!.github
 
 # Byte / compiled / optimized
 *.py[cod]
@@ -15,3 +16,4 @@ __pycache__/
 *.egg-info/
 .eggs/
 /doc/_generated
+uv.lock
