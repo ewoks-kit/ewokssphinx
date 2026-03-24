@@ -36,8 +36,7 @@ test = [
 ]
 dev = [
     "ewokssphinx[test]",
-    "black >=25",
-    "flake8 >=4",
+    "ruff",
 ]
 doc = [
     "ewokssphinx[test]",
@@ -59,6 +58,13 @@ ewokssphinx = ["*.css"]
 [tool.coverage.run]
 omit = ['*/tests/*']
 
-[tool.isort]
-profile = "black"
-force_single_line = "True"
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `S101` (assert used violations) in all test files
+"src/ewokssphinx/tests/*.py" = ["S101"]
+
+[tool.ruff.lint.isort]
+force-single-line = true
