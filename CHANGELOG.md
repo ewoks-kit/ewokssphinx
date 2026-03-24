@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0]
+
 ### Changed
 
 - Project migrated to https://github.com/ewoks-kit/ewokssphinx.
@@ -83,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `ewokstasks` directive.
 
-[unreleased]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.0.0...HEAD
+[unreleased]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/ewoks-kit/ewokssphinx/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/ewoks-kit/ewokssphinx/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/ewoks-kit/ewokssphinx/compare/v0.3.0...v0.4.0
