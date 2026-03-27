@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
 from sphinx.util.typing import stringify_annotation
 
+from .type_utils import ParameterDescription
 from .type_utils import TaskDescription
 
 
@@ -24,14 +25,14 @@ def discover_tasks(
         task_name = _get_task_name(task["task_identifier"], task["task_type"])
 
         if task.get("input_model"):
-            inputs = _parse_pydantic_model(task["input_model"])
+            inputs = parse_pydantic_model(task["input_model"])
         else:
             inputs = _parse_parameter_names(
                 task.get("required_input_names", []),
                 task.get("optional_input_names", []),
             )
         if task.get("output_model"):
-            outputs = _parse_pydantic_model(task["output_model"])
+            outputs = parse_pydantic_model(task["output_model"])
         else:
             outputs = _parse_parameter_names(task.get("output_names", []), [])
 
@@ -102,12 +103,14 @@ def _parse_parameter_names(
     return parameters
 
 
-def _parse_pydantic_model(model: BaseModel | None) -> list[dict[str, str | list[str]]]:
+def parse_pydantic_model(model: str | None) -> list[ParameterDescription]:
     parameters = []
     if model is None:
         return parameters
 
     model_cls = _import_model(model)
+    if not issubclass(model_cls, BaseModel):
+        raise ValueError("Not a pydantic model")
     for name, field_info in model_cls.model_fields.items():
         parameters.append(_parse_pydantic_field(name, field_info))
     return parameters
@@ -123,7 +126,7 @@ def _parse_doc(text) -> str:
     return inspect.cleandoc(text) if text else ""
 
 
-def _parse_pydantic_field(name, field_info) -> dict[str, str | list[str] | None]:
+def _parse_pydantic_field(name, field_info) -> ParameterDescription:
     examples = getattr(field_info, "examples", None)
     default = getattr(field_info, "default", None)
     if default is PydanticUndefined:

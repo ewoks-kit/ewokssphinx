@@ -86,6 +86,38 @@ See [the relevant page in the Pydantic documentation](https://docs.pydantic.dev/
 :::
 
 
+If the task pydantic models contain themselves pydantic models, the nested models will be displayed in a separate section:
+
+::::{tab-set}
+
+:::{tab-item} Python
+
+```{literalinclude} ../src/ewokssphinx/tests/dummy_tasks_nested.py
+:language: python
+```
+
+:::
+
+:::{tab-item} reST
+
+```rst
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks_nested
+    :task-type: class
+```
+
+:::
+
+:::{tab-item} Sphinx
+
+```{ewokstasks} ewokssphinx.tests.dummy_tasks_nested
+:task-type: class
+```
+
+:::
+
+::::
+
+
 ## Method
 
 ::::{tab-set}

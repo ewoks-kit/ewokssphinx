@@ -5,6 +5,7 @@ from sphinx.util.docutils import SphinxDirective
 
 from .ewoks_task_utils import cached_tasks
 from .ewoks_task_utils import discover_tasks
+from .sphinx_task_utils import additional_model_nodes
 from .sphinx_task_utils import task_nodes
 
 logger = logging.getLogger(__name__)
@@ -42,4 +43,7 @@ class EwoksTaskDirective(SphinxDirective):
         )
 
         task_sections = task_nodes(self, tasks)
+        additional_model_section = additional_model_nodes(self, tasks)
+        if additional_model_section is not None:
+            return [*task_sections, additional_model_section]
         return task_sections

@@ -69,3 +69,8 @@ def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
     assert_node(field_list_nodes, nodes.field_list)
     assert_field_node(field_list_nodes[0], name="Identifier", value=identifier)
     assert_field_node(field_list_nodes[1], name="Task type", value=task_type)
+
+
+def assert_section(node, title: str):
+    assert isinstance(node, nodes.section)
+    assert_node(node[0], nodes.title, title)

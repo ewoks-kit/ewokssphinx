@@ -2,6 +2,7 @@ from docutils import nodes
 from sphinx.testing import restructuredtext
 
 from .test_utils import assert_node
+from .test_utils import assert_section
 from .test_utils import assert_task_preamble
 
 
@@ -57,3 +58,21 @@ def test_ewokstasks_with_pydantic_input_model(app):
         nodes.Text,
         "Name of the closest city or location to the given coordinates",
     )
+
+
+def test_ewokstasks_with_nested_pydantic_model(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks_nested
+              :task-type: class
+        """,
+    )
+
+    assert len(parsed_nodes) == 2
+    task_section, model_section = parsed_nodes
+    assert_section(task_section, "ComputeTimeToGo")
+
+    assert len(model_section) == 3
+    assert_section(model_section, "Additional models")
+    assert_section(model_section[1], "Coordinates")
+    assert_section(model_section[2], "Location")
