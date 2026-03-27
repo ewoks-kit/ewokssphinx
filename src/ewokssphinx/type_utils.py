@@ -18,3 +18,6 @@ class TaskDescription(BaseModel, extra="forbid"):
     description: str
     inputs: list[TaskParameter]
     outputs: list[TaskParameter]
+
+
+ParameterDescription = dict[str, str | list[str] | bool | None]

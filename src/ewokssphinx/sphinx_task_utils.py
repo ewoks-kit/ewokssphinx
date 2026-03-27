@@ -4,6 +4,8 @@ from typing import Sequence
 from docutils import nodes
 from sphinx.util.docutils import SphinxDirective
 
+from .ewoks_task_utils import parse_pydantic_model
+from .type_utils import ParameterDescription
 from .type_utils import TaskDescription
 
 
@@ -45,38 +47,37 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
         )
     )
 
-    # Combine inputs + outputs in a container so that
-    # Sphinx does not attach the "simple" CSS class.
-    io_def = nodes.container("")
-    if task["inputs"]:
-        input_parameters = _parameter_nodes(
-            directive,
-            title="Inputs:",
-            css_classes=["field-odd"],
-            parameters=task["inputs"],
-            is_outputs=False,
-        )
-        io_def.append(input_parameters)
-
-    if task["outputs"]:
-        output_parameters = _parameter_nodes(
-            directive,
-            title="Outputs:",
-            css_classes=["field-even"],
-            parameters=task["outputs"],
-            is_outputs=True,
-        )
-        io_def.append(output_parameters)
-
     section.append(
-        nodes.definition_list(
-            "",
-            io_def,
-            classes=["ewokssphinx-field-list"],
-        )
+        _field_list(directive, {"inputs": task["inputs"], "outputs": task["outputs"]})
     )
 
     return section
+
+
+def _field_list(
+    directive: SphinxDirective, field_categories: dict[str, list[ParameterDescription]]
+) -> nodes.definition_list:
+    # Combine fields in a container so that
+    # Sphinx does not attach the "simple" CSS class.
+    io_def = nodes.container("")
+
+    for category, fields in field_categories.items():
+        if not fields:
+            continue
+        input_parameters = _parameter_nodes(
+            directive,
+            title=f"{category.capitalize()}:",
+            css_classes=["field-even" if len(io_def) % 2 == 0 else "field-odd"],
+            parameters=fields,
+            is_outputs=category == "outputs",
+        )
+        io_def.append(input_parameters)
+
+    return nodes.definition_list(
+        "",
+        io_def,
+        classes=["ewokssphinx-field-list"],
+    )
 
 
 def _field_node(name: str, body: nodes.Element) -> nodes.field:
@@ -110,7 +111,7 @@ def _parameter_nodes(
     directive: SphinxDirective,
     title: str,
     css_classes: list[str],
-    parameters: dict[str, str | list[str] | None],
+    parameters: list[ParameterDescription],
     is_outputs: bool,
 ) -> nodes.definition_list_item:
 
@@ -127,7 +128,7 @@ def _parameter_nodes(
 
 
 def _parameter_node(
-    directive: SphinxDirective, parameter: dict[str, Any], is_output: bool
+    directive: SphinxDirective, parameter: ParameterDescription, is_output: bool
 ) -> nodes.definition_list_item:
     """
     Full parameter description structure:
@@ -190,3 +191,51 @@ def _examples_node(examples: list[Any]) -> nodes.container:
 def _rst_to_nodes(directive: SphinxDirective, text: str) -> list[nodes.Node]:
     # TODO: directives like ".. note::" still appear as plain text.
     return directive.parse_text_to_nodes(text)
+
+
+def _get_annotations(tasks: Sequence[dict[str, Any]]):
+    annotations: set[str] = set()
+
+    for task_dict in tasks:
+        task = TaskDescription(**task_dict)
+        parameters = task.inputs + task.outputs
+        for parameter in parameters:
+            annotation = parameter.annotation
+            if annotation is None:
+                continue
+            if "|" in annotation:
+                for a in annotation.split("|"):
+                    annotations.add(a.strip())
+            else:
+                annotations.add(annotation)
+
+    # Enforce consistent ordering
+    return sorted(annotations)
+
+
+def additional_model_nodes(
+    directive: SphinxDirective, tasks: Sequence[dict[str, Any]]
+) -> nodes.section | None:
+    annotations = _get_annotations(tasks)
+
+    model_sections = []
+    for annotation in annotations:
+        try:
+            model = parse_pydantic_model(annotation)
+        except (ValueError, ModuleNotFoundError):
+            # Not a Pydantic model
+            continue
+        section = nodes.section("", ids=[annotation])
+        section.append(nodes.title("", annotation.split(".")[-1]))
+
+        section.append(_field_list(directive, {"fields": model}))
+        model_sections.append(section)
+    if not model_sections:
+        return None
+
+    return nodes.section(
+        "",
+        nodes.title("", "Additional models"),
+        *model_sections,
+        ids=["Additional models"],
+    )

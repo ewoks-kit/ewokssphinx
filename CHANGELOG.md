@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ewokstasks` directive now displays nested pydantic models in a separate section
+
 ## [2.1.0]
 
 ### Changed
