@@ -2,7 +2,7 @@
 
 
 [![Pipeline](https://github.com/ewoks-kit/ewokssphinx/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ewoks-kit/ewokssphinx/actions/workflows/test.yml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![License](https://img.shields.io/github/license/ewoks-kit/ewokssphinx)](https://github.com/ewoks-kit/ewokssphinx/blob/main/LICENSE.md)
 [![Coverage](https://codecov.io/gh/ewoks-kit/ewokssphinx/branch/main/graph/badge.svg)](https://codecov.io/gh/ewoks-kit/ewokssphinx)
 [![Docs](https://readthedocs.org/projects/ewokssphinx/badge/?version=latest)](https://ewokssphinx.readthedocs.io/en/latest/?badge=latest)

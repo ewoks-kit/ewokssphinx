@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ewokssphinx"
-version = "2.1.0"
+version = "2.2.0"
 keywords = ['ewoks', 'sphinx']
 authors = [{ name = "ESRF", email = "dau-pydev@esrf.fr" }]
 description = "Ewoks Sphinx directives"
@@ -59,7 +59,7 @@ ewokssphinx = ["*.css"]
 omit = ['*/tests/*']
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "I", "S"]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
