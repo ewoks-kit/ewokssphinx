@@ -97,6 +97,7 @@ def app_with_cache(tmp_path_factory):
                 "required": True,
             },
         ],
+        "submodels": [],
     }
     cache = {"ewoksnoexisting.tasks.MyNonExistingTask": {"class": [task]}}
     with open(json_cache_path, "w") as fp:
