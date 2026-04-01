@@ -2,9 +2,15 @@ import importlib
 import inspect
 import json
 from pathlib import Path
+from typing import Annotated
 from typing import Any
+from typing import Iterator
+from typing import Type
+from typing import get_args
+from typing import get_origin
 
 from ewokscore.task_discovery import discover_tasks_from_modules
+from ewoksutils.import_utils import qualname
 from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
 from sphinx.util.typing import stringify_annotation
@@ -24,14 +30,17 @@ def discover_tasks(
     ):
         task_name = _get_task_name(task["task_identifier"], task["task_type"])
 
-        if task.get("input_model"):
-            inputs = parse_pydantic_model(task["input_model"])
+        input_model = task.get("input_model")
+        if input_model is not None:
+            inputs = parse_pydantic_model(input_model)
         else:
             inputs = _parse_parameter_names(
                 task.get("required_input_names", []),
                 task.get("optional_input_names", []),
             )
-        if task.get("output_model"):
+
+        output_model = task.get("output_model")
+        if output_model:
             outputs = parse_pydantic_model(task["output_model"])
         else:
             outputs = _parse_parameter_names(task.get("output_names", []), [])
@@ -43,6 +52,9 @@ def discover_tasks(
             "description": _parse_doc(task.get("description")),
             "inputs": inputs,
             "outputs": outputs,
+            "submodels": sorted(
+                extract_submodels(input_model) | extract_submodels(output_model)
+            ),
         }
         _ = TaskDescription(**serialized_task)
 
@@ -145,3 +157,43 @@ def _parse_pydantic_field(name, field_info) -> ParameterDescription:
         "default": None if default is None else str(default),
         "has_default": has_default,
     }
+
+
+def extract_submodels(model_qualname: str | None) -> set[str]:
+    if model_qualname is None:
+        return set()
+
+    model = _import_model(model_qualname)
+    return set(
+        qualname(t)
+        for t in _iter_types(model, seen=set())
+        if issubclass(t, BaseModel) and t is not model
+    )
+
+
+def _iter_types(annotation: Any, seen: set[int]) -> Iterator[Type]:
+    """Yield all types in `annotation` without duplicates, including Pydantic v2 model fields."""
+    annotation_id = id(annotation)
+    if annotation_id in seen:
+        return
+    seen.add(annotation_id)
+
+    # Yield actual classes
+    if isinstance(annotation, type):
+        yield annotation
+
+        # Recurse into Pydantic v2 model fields
+        if issubclass(annotation, BaseModel):
+            for field in annotation.model_fields.values():
+                yield from _iter_types(field.annotation, seen)
+
+    origin = get_origin(annotation)
+    # Handle Annotated[T, ...]
+    if origin is Annotated:
+        base_type, *_ = get_args(annotation)
+        yield from _iter_types(base_type, seen)
+        return
+
+    # Recurse into generic arguments (Union, list, dict, etc.)
+    for arg in get_args(annotation):
+        yield from _iter_types(arg, seen)

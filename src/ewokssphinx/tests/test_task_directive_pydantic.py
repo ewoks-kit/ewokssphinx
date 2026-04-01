@@ -72,7 +72,8 @@ def test_ewokstasks_with_nested_pydantic_model(app):
     task_section, model_section = parsed_nodes
     assert_section(task_section, "ComputeTimeToGo")
 
-    assert len(model_section) == 3
+    assert len(model_section) == 4
     assert_section(model_section, "Additional models")
     assert_section(model_section[1], "Coordinates")
     assert_section(model_section[2], "Location")
+    assert_section(model_section[3], "Planet")
