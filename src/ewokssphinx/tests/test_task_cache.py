@@ -1,6 +1,6 @@
 from sphinx.testing import restructuredtext
 
-from .test_utils import assert_task_nodes
+from .utils import assert_task_nodes
 
 
 def test_cache(app_with_cache):

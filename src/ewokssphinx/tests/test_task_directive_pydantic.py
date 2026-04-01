@@ -1,9 +1,9 @@
 from docutils import nodes
 from sphinx.testing import restructuredtext
 
-from .test_utils import assert_node
-from .test_utils import assert_section
-from .test_utils import assert_task_preamble
+from .utils import assert_node
+from .utils import assert_section
+from .utils import assert_task_preamble
 
 
 def test_ewokstasks_with_pydantic_input_model(app):
