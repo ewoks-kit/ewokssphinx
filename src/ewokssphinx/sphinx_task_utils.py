@@ -4,7 +4,6 @@ from typing import Sequence
 from docutils import nodes
 from sphinx.util.docutils import SphinxDirective
 
-from .ewoks_task_utils import parse_pydantic_model
 from .type_utils import ParameterDescription
 from .type_utils import TaskDescription
 
@@ -198,16 +197,11 @@ def additional_model_nodes(
 ) -> nodes.section | None:
     model_sections = []
     for task in tasks:
-        for model_name in task["submodels"]:
-            try:
-                model = parse_pydantic_model(model_name)
-            except (ValueError, ModuleNotFoundError):
-                # Not a Pydantic model
-                continue
+        for model_name, model_fields in task["submodels"].items():
             section = nodes.section("", ids=[model_name])
             section.append(nodes.title("", model_name.split(".")[-1]))
 
-            section.append(_field_list(directive, {"fields": model}))
+            section.append(_field_list(directive, {"fields": model_fields}))
             model_sections.append(section)
 
     if not model_sections:

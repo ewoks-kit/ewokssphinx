@@ -52,9 +52,12 @@ def discover_tasks(
             "description": _parse_doc(task.get("description")),
             "inputs": inputs,
             "outputs": outputs,
-            "submodels": sorted(
-                extract_submodels(input_model) | extract_submodels(output_model)
-            ),
+            "submodels": {
+                model_name: parse_pydantic_model(model_name)
+                for model_name in sorted(
+                    extract_submodels(input_model) | extract_submodels(output_model)
+                )
+            },
         }
         _ = TaskDescription(**serialized_task)
 
@@ -164,36 +167,30 @@ def extract_submodels(model_qualname: str | None) -> set[str]:
         return set()
 
     model = _import_model(model_qualname)
-    return set(
-        qualname(t)
-        for t in _iter_types(model, seen=set())
-        if issubclass(t, BaseModel) and t is not model
-    )
+    # Need to remove the original model to get only submodels
+    return set(qualname(t) for t in _iter_models(model, seen=set()) if t is not model)
 
 
-def _iter_types(annotation: Any, seen: set[int]) -> Iterator[Type]:
-    """Yield all types in `annotation` without duplicates, including Pydantic v2 model fields."""
+def _iter_models(annotation: Any, seen: set[int]) -> Iterator[Type[BaseModel]]:
     annotation_id = id(annotation)
     if annotation_id in seen:
         return
     seen.add(annotation_id)
 
-    # Yield actual classes
-    if isinstance(annotation, type):
+    if isinstance(annotation, type) and issubclass(annotation, BaseModel):
         yield annotation
 
-        # Recurse into Pydantic v2 model fields
-        if issubclass(annotation, BaseModel):
-            for field in annotation.model_fields.values():
-                yield from _iter_types(field.annotation, seen)
+        # Recurse into model fields
+        for field in annotation.model_fields.values():
+            yield from _iter_models(field.annotation, seen)
 
     origin = get_origin(annotation)
     # Handle Annotated[T, ...]
     if origin is Annotated:
         base_type, *_ = get_args(annotation)
-        yield from _iter_types(base_type, seen)
+        yield from _iter_models(base_type, seen)
         return
 
     # Recurse into generic arguments (Union, list, dict, etc.)
     for arg in get_args(annotation):
-        yield from _iter_types(arg, seen)
+        yield from _iter_models(arg, seen)
