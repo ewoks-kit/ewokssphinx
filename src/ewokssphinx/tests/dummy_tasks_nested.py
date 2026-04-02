@@ -1,3 +1,4 @@
+from typing import Annotated
 from typing import Literal
 
 from ewokscore import Task
@@ -7,8 +8,14 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
+class Planet(BaseModel):
+    name: str
+    radius: Annotated[float, Field(gt=0)]
+    gaseous: bool
+
+
 class Coordinates(BaseModel):
-    planet: str = "Earth"
+    planet: Planet
     latitude: int = Field(examples=[-90, 0, 90])
     longitude: float = Field(
         description="Longitude of the GPS point. **In degrees.**", examples=[-90, 0, 90]

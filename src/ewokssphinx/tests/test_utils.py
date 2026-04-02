@@ -1,76 +1,46 @@
-from typing import Type
+from pydantic import BaseModel
 
-from docutils import nodes
-from docutils.nodes import Node
-
-from ..ewoks_task_utils import _get_task_name
+from ewokssphinx.ewoks_task_utils import _extract_submodels
 
 
-def assert_node(node, cls: Type[Node], text: str | None = None):
-    assert isinstance(node, cls)
-    if text is not None:
-        assert node.astext() == text
+class Type1(BaseModel):
+    pass
 
 
-def assert_field_node(node, name: str, value: str):
-    assert isinstance(node, nodes.field)
-    assert_node(node[0], nodes.field_name, name)
-    assert_node(node[1], nodes.field_body, value)
+class Type2(BaseModel):
+    pass
 
 
-def assert_simple_inputs(input_list, required_inputs, optional_inputs):
-    input_term, input_definition = input_list
-    assert_node(input_term, nodes.term, "Inputs:")
-    assert_node(input_definition, nodes.definition)
-
-    n_required = len(required_inputs)
-    for i in range(n_required):
-        assert_node(input_definition[0][i][0], nodes.term, f"{required_inputs[i]}*")
-
-    n_optional = len(optional_inputs)
-    for i in range(n_optional):
-        assert_node(
-            input_definition[0][n_required + i][0], nodes.term, optional_inputs[i]
-        )
+class Type3a(BaseModel):
+    pass
 
 
-def assert_simple_outputs(output_list, outputs):
-    output_term, output_definition = output_list
-    assert_node(output_term, nodes.term, "Outputs:")
-    assert_node(output_definition, nodes.definition)
-    for i, output_name in enumerate(outputs):
-        assert_node(output_definition[0][i][0], nodes.term, output_name)
+class Type3b(BaseModel):
+    var: dict[str, Type3a]
 
 
-def assert_task_nodes(
-    parsed_nodes, identifier, doc, task_type, required_inputs, optional_inputs, outputs
-):
-    assert_task_preamble(parsed_nodes, identifier, doc, task_type)
-    definition_list_node = parsed_nodes[-1]
-    container_node = definition_list_node[0]
-    input_list = container_node[0]
-    assert_simple_inputs(
-        input_list,
-        required_inputs=required_inputs,
-        optional_inputs=optional_inputs,
-    )
-    output_list = container_node[1]
-    assert_simple_outputs(output_list, outputs=outputs)
+class Type3(BaseModel):
+    var: tuple[Type3b | Type2]
 
 
-def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
-    name = _get_task_name(identifier, task_type)
-    assert_node(parsed_nodes[0], nodes.title, name)
-    if doc is not None:
-        assert_node(parsed_nodes[1], nodes.paragraph, doc)
-        field_list_nodes = parsed_nodes[2]
-    else:
-        field_list_nodes = parsed_nodes[1]
-    assert_node(field_list_nodes, nodes.field_list)
-    assert_field_node(field_list_nodes[0], name="Identifier", value=identifier)
-    assert_field_node(field_list_nodes[1], name="Task type", value=task_type)
+Annotation = Type1 | list[Type2] | dict[str, list[int | Type3]]
 
 
-def assert_section(node, title: str):
-    assert isinstance(node, nodes.section)
-    assert_node(node[0], nodes.title, title)
+def test_extract_type():
+
+    assert sorted(_extract_submodels(Annotation).keys()) == [
+        "ewokssphinx.tests.test_utils.Type1",
+        "ewokssphinx.tests.test_utils.Type2",
+        "ewokssphinx.tests.test_utils.Type3",
+        "ewokssphinx.tests.test_utils.Type3a",
+        "ewokssphinx.tests.test_utils.Type3b",
+    ]
+
+
+def test_extract_type_inputs():
+    from ewokssphinx.tests.dummy_tasks_nested import Inputs
+
+    assert sorted(_extract_submodels(Inputs)) == [
+        "ewokssphinx.tests.dummy_tasks_nested.Coordinates",
+        "ewokssphinx.tests.dummy_tasks_nested.Planet",
+    ]
