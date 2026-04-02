@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from ewokssphinx.ewoks_task_utils import extract_submodels
+from ewokssphinx.ewoks_task_utils import _extract_submodels
 
 
 class Type1(BaseModel):
@@ -28,21 +28,19 @@ Annotation = Type1 | list[Type2] | dict[str, list[int | Type3]]
 
 def test_extract_type():
 
-    assert extract_submodels("ewokssphinx.tests.test_utils.Annotation") == set(
-        [
-            "ewokssphinx.tests.test_utils.Type1",
-            "ewokssphinx.tests.test_utils.Type2",
-            "ewokssphinx.tests.test_utils.Type3",
-            "ewokssphinx.tests.test_utils.Type3b",
-            "ewokssphinx.tests.test_utils.Type3a",
-        ]
-    )
+    assert sorted(_extract_submodels(Annotation).keys()) == [
+        "ewokssphinx.tests.test_utils.Type1",
+        "ewokssphinx.tests.test_utils.Type2",
+        "ewokssphinx.tests.test_utils.Type3",
+        "ewokssphinx.tests.test_utils.Type3a",
+        "ewokssphinx.tests.test_utils.Type3b",
+    ]
 
 
 def test_extract_type_inputs():
-    assert extract_submodels("ewokssphinx.tests.dummy_tasks_nested.Inputs") == set(
-        [
-            "ewokssphinx.tests.dummy_tasks_nested.Coordinates",
-            "ewokssphinx.tests.dummy_tasks_nested.Planet",
-        ]
-    )
+    from ewokssphinx.tests.dummy_tasks_nested import Inputs
+
+    assert sorted(_extract_submodels(Inputs)) == [
+        "ewokssphinx.tests.dummy_tasks_nested.Coordinates",
+        "ewokssphinx.tests.dummy_tasks_nested.Planet",
+    ]
