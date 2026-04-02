@@ -12,6 +12,7 @@ from typing import get_origin
 from ewokscore.task_discovery import discover_tasks_from_modules
 from ewoksutils.import_utils import qualname
 from pydantic import BaseModel
+from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 from sphinx.util.typing import stringify_annotation
 
@@ -30,21 +31,29 @@ def discover_tasks(
     ):
         task_name = _get_task_name(task["task_identifier"], task["task_type"])
 
-        input_model = task.get("input_model")
-        if input_model is not None:
-            inputs = parse_pydantic_model(input_model)
+        input_model_name = task.get("input_model")
+        if input_model_name is not None:
+            input_model = _import_model(input_model_name)
+            inputs = _parse_pydantic_model(input_model)
         else:
+            input_model = None
             inputs = _parse_parameter_names(
                 task.get("required_input_names", []),
                 task.get("optional_input_names", []),
             )
 
-        output_model = task.get("output_model")
-        if output_model:
-            outputs = parse_pydantic_model(task["output_model"])
+        output_model_name = task.get("output_model")
+        if output_model_name:
+            output_model = _import_model(output_model_name)
+            outputs = _parse_pydantic_model(output_model)
         else:
+            output_model = None
             outputs = _parse_parameter_names(task.get("output_names", []), [])
 
+        submodels = {
+            **_extract_submodels(input_model),
+            **_extract_submodels(output_model),
+        }
         serialized_task = {
             "task_name": task_name,
             "task_identifier": task["task_identifier"],
@@ -53,10 +62,7 @@ def discover_tasks(
             "inputs": inputs,
             "outputs": outputs,
             "submodels": {
-                model_name: parse_pydantic_model(model_name)
-                for model_name in sorted(
-                    extract_submodels(input_model) | extract_submodels(output_model)
-                )
+                k: _parse_pydantic_model(submodels[k]) for k in sorted(submodels.keys())
             },
         }
         _ = TaskDescription(**serialized_task)
@@ -118,30 +124,27 @@ def _parse_parameter_names(
     return parameters
 
 
-def parse_pydantic_model(model: str | None) -> list[ParameterDescription]:
-    parameters = []
-    if model is None:
-        return parameters
-
-    model_cls = _import_model(model)
-    if not issubclass(model_cls, BaseModel):
-        raise ValueError("Not a pydantic model")
-    for name, field_info in model_cls.model_fields.items():
-        parameters.append(_parse_pydantic_field(name, field_info))
-    return parameters
+def _parse_pydantic_model(model: Type[BaseModel]) -> list[ParameterDescription]:
+    return [
+        _parse_pydantic_field(name, field_info)
+        for name, field_info in model.model_fields.items()
+    ]
 
 
-def _import_model(input_model_qual_name: str) -> type:
-    module_name, _, model_name = input_model_qual_name.rpartition(".")
+def _import_model(model_qual_name: str) -> Type[BaseModel]:
+    module_name, _, model_name = model_qual_name.rpartition(".")
     mod = importlib.import_module(module_name)
-    return getattr(mod, model_name)
+    model = getattr(mod, model_name)
+    if not issubclass(model, BaseModel):
+        raise ValueError("Not a pydantic model")
+    return model
 
 
 def _parse_doc(text) -> str:
     return inspect.cleandoc(text) if text else ""
 
 
-def _parse_pydantic_field(name, field_info) -> ParameterDescription:
+def _parse_pydantic_field(name: str, field_info: FieldInfo) -> ParameterDescription:
     examples = getattr(field_info, "examples", None)
     default = getattr(field_info, "default", None)
     if default is PydanticUndefined:
@@ -162,13 +165,16 @@ def _parse_pydantic_field(name, field_info) -> ParameterDescription:
     }
 
 
-def extract_submodels(model_qualname: str | None) -> set[str]:
-    if model_qualname is None:
-        return set()
+def _extract_submodels(model: Any) -> dict[str, Type[BaseModel]]:
+    if model is None:
+        return {}
 
-    model = _import_model(model_qualname)
     # Need to remove the original model to get only submodels
-    return set(qualname(t) for t in _iter_models(model, seen=set()) if t is not model)
+    return {
+        qualname(submodel): submodel
+        for submodel in _iter_models(model, seen=set())
+        if submodel is not model
+    }
 
 
 def _iter_models(annotation: Any, seen: set[int]) -> Iterator[Type[BaseModel]]:
