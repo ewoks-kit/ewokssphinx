@@ -1,6 +1,7 @@
 import importlib
 import inspect
 import json
+from functools import reduce
 from pathlib import Path
 from typing import Annotated
 from typing import Any
@@ -50,10 +51,7 @@ def discover_tasks(
             output_model = None
             outputs = _parse_parameter_names(task.get("output_names", []), [])
 
-        submodels = {
-            **_extract_submodels(input_model),
-            **_extract_submodels(output_model),
-        }
+        submodels = _extract_submodels(input_model, output_model)
         serialized_task = {
             "task_name": task_name,
             "task_identifier": task["task_identifier"],
@@ -61,9 +59,7 @@ def discover_tasks(
             "description": _parse_doc(task.get("description")),
             "inputs": inputs,
             "outputs": outputs,
-            "submodels": {
-                k: _parse_pydantic_model(submodels[k]) for k in sorted(submodels.keys())
-            },
+            "submodels": {k: _parse_pydantic_model(v) for k, v in submodels.items()},
         }
         _ = TaskDescription(**serialized_task)
 
@@ -165,15 +161,20 @@ def _parse_pydantic_field(name: str, field_info: FieldInfo) -> ParameterDescript
     }
 
 
-def _extract_submodels(model: Any) -> dict[str, Type[BaseModel]]:
-    if model is None:
+def _extract_submodels(*raw_annotations: Any) -> dict[str, Type[BaseModel]]:
+    annotations = tuple(a for a in raw_annotations if a is not None)
+
+    if not annotations:
         return {}
 
-    # Need to remove the original model to get only submodels
+    # Iterate over the union to have depth-first ordering
+    union_of_annotations = reduce(lambda a, b: a | b, annotations)
+
     return {
-        qualname(submodel): submodel
-        for submodel in _iter_models(model, seen=set())
-        if submodel is not model
+        qualname(model_cls): model_cls
+        for model_cls in _iter_models(union_of_annotations, set())
+        # Remove original models to get only submodels
+        if model_cls not in annotations
     }
 
 
