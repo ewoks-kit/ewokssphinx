@@ -4,7 +4,6 @@ from typing import Sequence
 from docutils import nodes
 from sphinx.util.docutils import SphinxDirective
 
-from .ewoks_task_utils import parse_pydantic_model
 from .type_utils import ParameterDescription
 from .type_utils import TaskDescription
 
@@ -193,43 +192,18 @@ def _rst_to_nodes(directive: SphinxDirective, text: str) -> list[nodes.Node]:
     return directive.parse_text_to_nodes(text)
 
 
-def _get_annotations(tasks: Sequence[dict[str, Any]]):
-    annotations: set[str] = set()
-
-    for task_dict in tasks:
-        task = TaskDescription(**task_dict)
-        parameters = task.inputs + task.outputs
-        for parameter in parameters:
-            annotation = parameter.annotation
-            if annotation is None:
-                continue
-            if "|" in annotation:
-                for a in annotation.split("|"):
-                    annotations.add(a.strip())
-            else:
-                annotations.add(annotation)
-
-    # Enforce consistent ordering
-    return sorted(annotations)
-
-
 def additional_model_nodes(
     directive: SphinxDirective, tasks: Sequence[dict[str, Any]]
 ) -> nodes.section | None:
-    annotations = _get_annotations(tasks)
-
     model_sections = []
-    for annotation in annotations:
-        try:
-            model = parse_pydantic_model(annotation)
-        except (ValueError, ModuleNotFoundError):
-            # Not a Pydantic model
-            continue
-        section = nodes.section("", ids=[annotation])
-        section.append(nodes.title("", annotation.split(".")[-1]))
+    for task in tasks:
+        for model_name, model_fields in task["submodels"].items():
+            section = nodes.section("", ids=[model_name])
+            section.append(nodes.title("", model_name.split(".")[-1]))
 
-        section.append(_field_list(directive, {"fields": model}))
-        model_sections.append(section)
+            section.append(_field_list(directive, {"fields": model_fields}))
+            model_sections.append(section)
+
     if not model_sections:
         return None
 

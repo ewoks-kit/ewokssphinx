@@ -1,9 +1,9 @@
 from docutils import nodes
 from sphinx.testing import restructuredtext
 
-from .test_utils import assert_node
-from .test_utils import assert_section
-from .test_utils import assert_task_preamble
+from .utils import assert_node
+from .utils import assert_section
+from .utils import assert_task_preamble
 
 
 def test_ewokstasks_with_pydantic_input_model(app):
@@ -72,7 +72,8 @@ def test_ewokstasks_with_nested_pydantic_model(app):
     task_section, model_section = parsed_nodes
     assert_section(task_section, "ComputeTimeToGo")
 
-    assert len(model_section) == 3
+    assert len(model_section) == 4
     assert_section(model_section, "Additional models")
     assert_section(model_section[1], "Coordinates")
-    assert_section(model_section[2], "Location")
+    assert_section(model_section[2], "Planet")
+    assert_section(model_section[3], "Location")
