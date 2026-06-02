@@ -7,7 +7,9 @@ from ..ewoks_task_utils import _get_task_name
 
 
 def assert_node(node, cls: Type[Node], text: str | None = None):
-    assert isinstance(node, cls)
+    assert isinstance(
+        node, cls
+    ), f"Expected node of type {cls.__name__}, but got {type(node).__name__}"
     if text is not None:
         assert node.astext() == text
 
