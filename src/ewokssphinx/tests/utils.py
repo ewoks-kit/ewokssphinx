@@ -1,4 +1,5 @@
 from typing import Type
+from collections.abc import Iterable
 
 from docutils import nodes
 from docutils.nodes import Node
@@ -6,10 +7,12 @@ from docutils.nodes import Node
 from ..ewoks_task_utils import _get_task_name
 
 
-def assert_node(node, cls: Type[Node], text: str | None = None):
+def assert_node(node, cls: Type[Node] | tuple[Type[Node]], text: str | None = None):
+    if not isinstance(cls, Iterable):
+        cls = (cls,)
     assert isinstance(
         node, cls
-    ), f"Expected node of type {cls.__name__}, but got {type(node).__name__}"
+    ), f"Expected node of type {[cls_item.__name__ for cls_item in cls]}, but got {type(node).__name__}"
     if text is not None:
         assert node.astext() == text
 
@@ -62,7 +65,10 @@ def assert_task_nodes(
 
 def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
     name = _get_task_name(identifier, task_type)
-    assert_node(parsed_nodes[0], nodes.rubric, name)
+    # warning: A rubric is like an informal heading that doesn’t correspond to the document’s structure, i.e. it does not create a table of contents node.
+    # see https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#presentational
+    # so ultimately it can be interpreted different ways.
+    assert_node(parsed_nodes[0], (nodes.subtitle, nodes.rubric, str), name)
     if doc is not None:
         assert_node(parsed_nodes[1], nodes.paragraph, doc)
         field_list_nodes = parsed_nodes[2]
