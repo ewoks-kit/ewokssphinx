@@ -9,14 +9,18 @@ from .utils import assert_task_preamble
 def test_ewokstasks_with_pydantic_input_model(app):
     parsed_nodes = restructuredtext.parse(
         app,
-        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks_pydantic
-              :task-type: class
-        """,
+        """
+Title
+=====
+
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks_pydantic
+    :task-type: class
+""",
     )
 
-    assert len(parsed_nodes) == 4
+    assert len(parsed_nodes) == 5
     assert_task_preamble(
-        parsed_nodes,
+        parsed_nodes[1:],
         "ewokssphinx.tests.dummy_tasks_pydantic.FindLocation",
         """Finds a location given the GPS coordinates""",
         "class",
@@ -63,13 +67,17 @@ def test_ewokstasks_with_pydantic_input_model(app):
 def test_ewokstasks_with_nested_pydantic_model(app):
     parsed_nodes = restructuredtext.parse(
         app,
-        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks_nested
-              :task-type: class
-        """,
+        """
+Title
+=====
+
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks_nested
+    :task-type: class
+""",
     )
 
-    assert len(parsed_nodes) == 2
-    task_section, model_section = parsed_nodes
+    assert len(parsed_nodes) == 3
+    task_section, model_section = parsed_nodes[1:]
     assert_section(task_section, "ComputeTimeToGo")
 
     assert len(model_section) == 4

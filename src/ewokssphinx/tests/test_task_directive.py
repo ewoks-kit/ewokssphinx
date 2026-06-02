@@ -6,39 +6,52 @@ from .utils import assert_task_nodes
 
 def test_ewokstasks(app):
     parsed_nodes = restructuredtext.parse(
-        app, ".. ewokstasks:: ewokssphinx.tests.dummy_tasks"
+        app,
+        """
+Title
+=====
+
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks""",
     )
 
-    assert len(parsed_nodes) == 4
-    _assert_class_task_nodes(parsed_nodes[0])
-    _assert_ppfmethod_nodes(parsed_nodes[1])
-    _assert_method_nodes(parsed_nodes[2:])
+    assert len(parsed_nodes) == 5
+    _assert_class_task_nodes(parsed_nodes[1])
+    _assert_ppfmethod_nodes(parsed_nodes[2])
+    _assert_method_nodes(parsed_nodes[3:])
 
 
 def test_ewokstasks_class(app):
     parsed_nodes = restructuredtext.parse(
         app,
-        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
-              :task-type: class
-        """,
+        """
+Title
+=====
+
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks
+    :task-type: class
+""",
     )
 
-    assert len(parsed_nodes) == 4
-    _assert_class_task_nodes(parsed_nodes)
+    assert len(parsed_nodes) == 5
+    _assert_class_task_nodes(parsed_nodes[1:])
 
 
 def test_nested_ewokstasks_class(app):
     parsed_nodes = restructuredtext.parse(
         app,
-        """.. note::
+        """
+Title
+=====
 
-            .. ewokstasks:: ewokssphinx.tests.dummy_tasks
-                :task-type: class
-        """,
+.. note::
+
+    .. ewokstasks:: ewokssphinx.tests.dummy_tasks
+        :task-type: class
+""",
     )
 
-    assert len(parsed_nodes) == 1
-    assert len(parsed_nodes[0][0]) == 4
+    assert len(parsed_nodes) == 2
+    assert len(parsed_nodes[1][0]) == 4
 
     _assert_class_task_nodes(parsed_nodes[0][0])
 
@@ -46,25 +59,33 @@ def test_nested_ewokstasks_class(app):
 def test_ewokstasks_method(app):
     parsed_nodes = restructuredtext.parse(
         app,
-        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
-              :task-type: method
-        """,
+        """
+Title
+=====
+
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks
+    :task-type: method
+""",
     )
 
-    assert len(parsed_nodes) == 2
-    _assert_method_nodes(parsed_nodes)
+    assert len(parsed_nodes) == 3
+    _assert_method_nodes(parsed_nodes[1:])
 
 
 def test_ewokstasks_ppfmethod(app):
     parsed_nodes = restructuredtext.parse(
         app,
-        """.. ewokstasks:: ewokssphinx.tests.dummy_tasks
-              :task-type: ppfmethod
-        """,
+        """
+Title
+=====
+
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks
+    :task-type: ppfmethod
+""",
     )
 
-    assert len(parsed_nodes) == 4
-    _assert_ppfmethod_nodes(parsed_nodes)
+    assert len(parsed_nodes) == 5
+    _assert_ppfmethod_nodes(parsed_nodes[1:])
 
 
 def test_ewokstasks_raised_import_error(app):
