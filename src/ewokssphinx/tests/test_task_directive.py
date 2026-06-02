@@ -47,13 +47,17 @@ Title
 
     .. ewokstasks:: ewokssphinx.tests.dummy_tasks
         :task-type: class
+
+.. note::
+
+    second section
 """,
     )
 
-    assert len(parsed_nodes) == 2
+    assert len(parsed_nodes) == 3
     assert len(parsed_nodes[1][0]) == 4
 
-    _assert_class_task_nodes(parsed_nodes[0][0])
+    _assert_class_task_nodes(parsed_nodes[1][0])
 
 
 def test_ewokstasks_method(app):
