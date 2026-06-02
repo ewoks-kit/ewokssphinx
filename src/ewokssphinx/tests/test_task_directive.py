@@ -27,6 +27,22 @@ def test_ewokstasks_class(app):
     _assert_class_task_nodes(parsed_nodes)
 
 
+def test_nested_ewokstasks_class(app):
+    parsed_nodes = restructuredtext.parse(
+        app,
+        """.. note::
+
+            .. ewokstasks:: ewokssphinx.tests.dummy_tasks
+                :task-type: class
+        """,
+    )
+
+    assert len(parsed_nodes) == 1
+    assert len(parsed_nodes[0][0]) == 4
+
+    _assert_class_task_nodes(parsed_nodes[0][0])
+
+
 def test_ewokstasks_method(app):
     parsed_nodes = restructuredtext.parse(
         app,

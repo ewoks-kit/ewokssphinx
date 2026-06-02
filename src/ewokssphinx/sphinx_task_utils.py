@@ -30,8 +30,8 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
         classes=["ewokssphinx-task"],
     )
 
-    # Title
-    section.append(nodes.title(text=task["task_name"]))
+    # Rubric
+    section.append(nodes.rubric(text=task["task_name"]))
 
     # Description
     if task["description"]:
@@ -199,7 +199,7 @@ def additional_model_nodes(
     for task in tasks:
         for model_name, model_fields in task["submodels"].items():
             section = nodes.section("", ids=[model_name])
-            section.append(nodes.title("", model_name.split(".")[-1]))
+            section.append(nodes.rubric("", model_name.split(".")[-1]))
 
             section.append(_field_list(directive, {"fields": model_fields}))
             model_sections.append(section)
@@ -209,7 +209,7 @@ def additional_model_nodes(
 
     return nodes.section(
         "",
-        nodes.title("", "Additional models"),
+        nodes.rubric("", "Additional models"),
         *model_sections,
         ids=["Additional models"],
     )

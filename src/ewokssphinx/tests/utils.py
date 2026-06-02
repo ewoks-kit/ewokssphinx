@@ -60,7 +60,7 @@ def assert_task_nodes(
 
 def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
     name = _get_task_name(identifier, task_type)
-    assert_node(parsed_nodes[0], nodes.title, name)
+    assert_node(parsed_nodes[0], nodes.rubric, name)
     if doc is not None:
         assert_node(parsed_nodes[1], nodes.paragraph, doc)
         field_list_nodes = parsed_nodes[2]
@@ -71,6 +71,6 @@ def assert_task_preamble(parsed_nodes, identifier, doc, task_type):
     assert_field_node(field_list_nodes[1], name="Task type", value=task_type)
 
 
-def assert_section(node, title: str):
+def assert_section(node, rubric: str):
     assert isinstance(node, nodes.section)
-    assert_node(node[0], nodes.title, title)
+    assert_node(node[0], nodes.rubric, rubric)
