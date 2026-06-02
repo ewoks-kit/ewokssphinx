@@ -65,7 +65,7 @@ def _field_list(
             continue
         input_parameters = _parameter_nodes(
             directive,
-            title=f"{category.capitalize()}:",
+            rubric=f"{category.capitalize()}:",
             css_classes=["field-even" if len(io_def) % 2 == 0 else "field-odd"],
             parameters=fields,
             is_outputs=category == "outputs",
@@ -108,7 +108,7 @@ def _term_node(name: str, is_required: bool) -> nodes.term:
 
 def _parameter_nodes(
     directive: SphinxDirective,
-    title: str,
+    rubric: str,
     css_classes: list[str],
     parameters: list[ParameterDescription],
     is_outputs: bool,
@@ -120,7 +120,7 @@ def _parameter_nodes(
 
     return nodes.definition_list_item(
         "",
-        nodes.term(text=title, classes=css_classes),
+        nodes.term(text=rubric, classes=css_classes),
         nodes.definition("", dl),
         classes=["field-list"],
     )
