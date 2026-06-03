@@ -14,3 +14,7 @@
 .ewokssphinx-task .ewokssphinx-examples {
     font-style: italic;
 }
+
+.ewokssphinx-task code[class="highlight"] {
+    white-space: pre-wrap;
+}

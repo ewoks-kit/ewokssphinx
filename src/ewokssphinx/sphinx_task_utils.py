@@ -1,7 +1,11 @@
+import pprint
 from typing import Any
 from typing import Sequence
 
 from docutils import nodes
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import PythonLexer
 from sphinx.util.docutils import SphinxDirective
 
 from .type_utils import ParameterDescription
@@ -174,10 +178,40 @@ def _parameter_node(
     return nodes.definition_list_item("", term, definition)
 
 
-def _examples_node(examples: list[Any]) -> nodes.container:
+def _highlighted_code(code: str) -> str:
+    lexer = PythonLexer()
+    formatter = HtmlFormatter(nowrap=True)
+    return (
+        f'<code class="highlight">{highlight(code, lexer, formatter).rstrip()}</code>'
+    )
+
+
+def _examples_node(formatted_examples: list[Any]) -> nodes.container:
+    formatted_examples = [
+        pprint.pformat(example, width=50) for example in formatted_examples
+    ]
+
+    if sum(len(str(example)) for example in formatted_examples) < 50 and not any(
+        "\n" in example for example in formatted_examples
+    ):
+        # Inline short examples
+        html_str = ";&nbsp;".join(
+            [_highlighted_code(example) for example in formatted_examples]
+        )
+        return nodes.container(
+            "",
+            nodes.Text("Examples: "),
+            nodes.raw("", html_str, format="html"),
+            classes=["ewokssphinx-examples"],
+        )
+
     bl = nodes.bullet_list()
-    for example in examples:
-        bl.append(nodes.list_item("", nodes.Text(example)))
+    for example in formatted_examples:
+        bl.append(
+            nodes.list_item(
+                "", nodes.raw("", _highlighted_code(example), format="html")
+            )
+        )
 
     return nodes.container(
         "",

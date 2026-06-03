@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -6,7 +8,7 @@ class TaskParameter(BaseModel, extra="forbid"):
     annotation: str | None
     required: bool
     description: str | None
-    examples: list[str]
+    examples: list[Any]
     default: str | None
     has_default: bool
 
@@ -21,4 +23,4 @@ class TaskDescription(BaseModel, extra="forbid"):
     submodels: dict[str, list[TaskParameter]]
 
 
-ParameterDescription = dict[str, str | list[str] | bool | None]
+ParameterDescription = dict[str, str | list[Any] | bool | None]
