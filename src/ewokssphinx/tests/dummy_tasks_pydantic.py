@@ -17,6 +17,22 @@ class Outputs(BaseOutputModel):
         ..., description="Name of the closest city or location to the given coordinates"
     )
     error: Exception | None
+    is_land: bool = Field(examples=[True, False])
+    languages: list[str] | None = Field(
+        examples=[None, ["english"], ["english", "chinese", "hindi", "spanish"]]
+    )
+    uuid: bytes | None = Field(
+        examples=[None, b"abcdefghijklmnopqrstuvwxyz0123456789876543210"]
+    )
+    metadata: dict = Field(
+        description="Key-value extra information",
+        examples=[
+            {
+                "uuid": "abcdefghijklmnopqrstuv",
+                "altitude": 100,
+            },
+        ],
+    )
 
 
 class FindLocation(

@@ -3,9 +3,6 @@ from typing import Any
 from typing import Sequence
 
 from docutils import nodes
-from pygments import highlight
-from pygments.formatters import HtmlFormatter
-from pygments.lexers import PythonLexer
 from sphinx.util.docutils import SphinxDirective
 
 from .type_utils import ParameterDescription
@@ -178,14 +175,6 @@ def _parameter_node(
     return nodes.definition_list_item("", term, definition)
 
 
-def _highlighted_code(code: str) -> str:
-    lexer = PythonLexer()
-    formatter = HtmlFormatter(nowrap=True)
-    return (
-        f'<code class="highlight">{highlight(code, lexer, formatter).rstrip()}</code>'
-    )
-
-
 def _examples_node(examples: list[Any], max_width: int) -> nodes.container:
     """
     :param format: Sphinx build format
@@ -198,14 +187,14 @@ def _examples_node(examples: list[Any], max_width: int) -> nodes.container:
     if sum(len(str(example)) for example in formatted_examples) < max_width and not any(
         "\n" in example for example in formatted_examples
     ):
-        # Inline short examples
-        html_str = ";&nbsp;".join(
-            [_highlighted_code(example) for example in formatted_examples]
-        )
+        example_nodes = []
+        for example in formatted_examples:
+            example_nodes.append(nodes.literal(text=example))
+            example_nodes.append(nodes.Text("; "))
         return nodes.container(
             "",
             nodes.Text("Examples: "),
-            nodes.raw("", html_str, format="html"),
+            *example_nodes[:-1],  # Remove last separator
             classes=["ewokssphinx-examples"],
         )
 
@@ -213,10 +202,9 @@ def _examples_node(examples: list[Any], max_width: int) -> nodes.container:
     for example in formatted_examples:
         bl.append(
             nodes.list_item(
-                "", nodes.raw("", _highlighted_code(example), format="html")
+                "", nodes.literal_block(example, example, language="python")
             )
         )
-
     return nodes.container(
         "",
         nodes.Text("Examples:"),
