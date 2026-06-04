@@ -148,14 +148,13 @@ def _parse_pydantic_field(name: str, field_info: FieldInfo) -> ParameterDescript
         has_default = False
     else:
         has_default = True
-    examples = [repr(example) for example in examples or []]
 
     return {
         "name": name,
         "annotation": stringify_annotation(field_info.annotation),
         "required": field_info.is_required(),
         "description": _parse_doc(field_info.description),
-        "examples": examples,
+        "examples": examples or [],
         "default": None if default is None else str(default),
         "has_default": has_default,
     }
