@@ -173,7 +173,7 @@ def _parameter_node(
     # Examples
     examples = parameter.get("examples")
     if examples:
-        definition.append(_examples_node(examples))
+        definition.append(_examples_node(examples, max_width=50))
 
     return nodes.definition_list_item("", term, definition)
 
@@ -186,12 +186,16 @@ def _highlighted_code(code: str) -> str:
     )
 
 
-def _examples_node(formatted_examples: list[Any]) -> nodes.container:
+def _examples_node(examples: list[Any], max_width: int) -> nodes.container:
+    """
+    :param format: Sphinx build format
+    :param max_width: Maximum number of characters per line to format the examples.
+    """
     formatted_examples = [
-        pprint.pformat(example, width=50) for example in formatted_examples
+        pprint.pformat(example, width=max_width) for example in examples
     ]
 
-    if sum(len(str(example)) for example in formatted_examples) < 50 and not any(
+    if sum(len(str(example)) for example in formatted_examples) < max_width and not any(
         "\n" in example for example in formatted_examples
     ):
         # Inline short examples
