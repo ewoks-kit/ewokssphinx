@@ -15,6 +15,11 @@
     font-style: italic;
 }
 
-.ewokssphinx-task code[class="highlight"] {
-    white-space: pre-wrap;
+.ewokssphinx-task .ewokssphinx-examples pre {
+    padding: 0.1rem;
+    border: none;
+}
+
+.ewokssphinx-task .ewokssphinx-examples li>div {
+    margin: 0;
 }

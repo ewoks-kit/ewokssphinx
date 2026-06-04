@@ -35,12 +35,15 @@ def test_ewokstasks_with_pydantic_input_model(app):
 
     longitude_definition = input_definition[0][2][1]
     longitude_description, longitude_examples = longitude_definition
-    longitude_examples_title, longitude_examples = longitude_examples
     assert_node(longitude_description, nodes.paragraph)
     assert_node(longitude_description[0], nodes.Text, "Longitude of the GPS point. ")
     assert_node(longitude_description[1], nodes.strong, "In degrees.")
-    assert_node(longitude_examples_title, nodes.Text, "Examples: ")
-    assert_node(longitude_examples, nodes.raw)
+    assert_node(longitude_examples[0], nodes.Text, "Examples: ")
+    assert_node(longitude_examples[1], nodes.literal, "-90")
+    assert_node(longitude_examples[2], nodes.Text, "; ")
+    assert_node(longitude_examples[3], nodes.literal, "0")
+    assert_node(longitude_examples[4], nodes.Text, "; ")
+    assert_node(longitude_examples[5], nodes.literal, "90")
 
     output_list = container_node[1]
     output_term, output_definition = output_list
