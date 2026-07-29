@@ -72,9 +72,10 @@ To use attribute docstrings instead of `description` to document the fields, set
 from ewokscore.model import BaseInputModel
 from pydantic import ConfigDict
 
+
 class Inputs(BaseInputModel):
-    model_config = ConfigDict(use_attribute_docstrings=True) 
-    
+    model_config = ConfigDict(use_attribute_docstrings=True)
+
     planet: str = "Earth"
     """The planet on which the search will be made"""
 

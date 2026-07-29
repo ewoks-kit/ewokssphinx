@@ -25,7 +25,7 @@ Then, add `ewokssphinx` to the list of `extensions` in the Sphinx configuration 
 
 extensions = [
     ...,
-    "ewokssphinx"
+    "ewokssphinx",
 ]
 ```
 
