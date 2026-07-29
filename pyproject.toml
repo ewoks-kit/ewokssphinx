@@ -36,7 +36,7 @@ test = [
 ]
 dev = [
     "ewokssphinx[test]",
-    "ruff",
+    "ruff>=0.16.0",
 ]
 doc = [
     "ewokssphinx[test]",
@@ -59,12 +59,21 @@ ewokssphinx = ["*.css"]
 omit = ['*/tests/*']
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "S"]
-ignore = ["E501"]
+select = [
+    "E", # pycodestyle errors
+    "F", # pyflakes
+    "I", # isort
+    "S", # flake8-bandit
+]
+ignore = [
+    "E501", # line too long
+]
 
 [tool.ruff.lint.per-file-ignores]
-# Ignore `S101` (assert used violations) in all test files
-"src/ewokssphinx/tests/*.py" = ["S101"]
+"src/ewokssphinx/tests/*.py" = [
+    "S101"  # allow asserts
+]
 
 [tool.ruff.lint.isort]
 force-single-line = true
+known-first-party = ["ewokssphinx"]
