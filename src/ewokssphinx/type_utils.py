@@ -21,6 +21,7 @@ class TaskDescription(BaseModel, extra="forbid"):
     inputs: list[TaskParameter]
     outputs: list[TaskParameter]
     submodels: dict[str, list[TaskParameter]]
+    tags: list[str] = []
 
 
 ParameterDescription = dict[str, str | list[Any] | bool | None]
