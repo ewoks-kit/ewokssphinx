@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ewokstasks` directive: `include-tags` and `exclude-tags` options.
 - Filter tasks on tags in HTML pages.
 
+### Deprecated
+
+- Non-list `examples` in pydantic fields of task models.
+
+### Fixed
+
+- `ewokstasks` directive failed on pydantic fields with non-list `examples`.
+
 ## [2.2.1] - 2026-04-21
 
 ### Fixed
