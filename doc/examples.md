@@ -119,6 +119,38 @@ If the task pydantic models contain themselves pydantic models, the nested model
 ::::
 
 
+## Class with tags
+
+::::{tab-set}
+
+:::{tab-item} Python
+
+```{literalinclude} ../src/ewokssphinx/tests/dummy_tasks_tags.py
+:language: python
+```
+
+:::
+
+:::{tab-item} reST
+
+```rst
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks_tags
+    :task-type: class
+```
+
+:::
+
+:::{tab-item} Sphinx
+
+```{ewokstasks} ewokssphinx.tests.dummy_tasks_tags
+:task-type: class
+```
+
+:::
+
+::::
+
+
 ## Method
 
 ::::{tab-set}
