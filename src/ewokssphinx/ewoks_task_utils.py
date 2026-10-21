@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Annotated
 from typing import Any
 from typing import Iterator
+from typing import Sequence
 from typing import Type
 from typing import get_args
 from typing import get_origin
@@ -92,6 +93,25 @@ def cached_tasks(
     json_cache_path.write_text(json.dumps(cache, indent=2), encoding="utf-8")
 
     return module_pattern_dict[task_type]
+
+
+def filter_tasks_by_tags(
+    tasks: Sequence[dict[str, Any]],
+    include_tags: Sequence[str] | None = None,
+    exclude_tags: Sequence[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Keep tasks with at least one of `include_tags` (when given) and none of `exclude_tags`."""
+    include = set(include_tags or ())
+    exclude = set(exclude_tags or ())
+    filtered = []
+    for task in tasks:
+        tags = set(task.get("tags", ()))
+        if include and not (tags & include):
+            continue
+        if tags & exclude:
+            continue
+        filtered.append(task)
+    return filtered
 
 
 def _get_task_name(identifier: str, task_type: str) -> str:

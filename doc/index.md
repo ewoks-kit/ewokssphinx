@@ -76,6 +76,26 @@ The [Examples page](./examples) contains real examples with Python code, RST syn
         :ignore-import-error:
     ```
 
+- `:include-tags:` and `:exclude-tags:` (comma-separated tags)
+
+    Generates documentation only for tasks with at least one of the included tags
+    (when given) and none of the excluded tags.
+
+    _Example_:
+
+    ```
+    .. ewokstasks:: ewoksxrpd.tasks.*
+        :include-tags: integration, xrpd
+        :exclude-tags: deprecated
+    ```
+
+#### Tag filter
+
+The tags of a task are shown in its documentation. In HTML pages with tagged tasks,
+readers can filter the tasks by clicking on tags: a first click only shows tasks with
+that tag, a second click hides tasks with that tag and a third click resets it.
+The filter is kept in the `include_tags` and `exclude_tags` URL query parameters.
+
 
 ```{toctree}
 :hidden:

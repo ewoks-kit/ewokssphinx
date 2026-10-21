@@ -28,7 +28,8 @@ def setup(app: Sphinx):
     )
 
     app.add_css_file("ewokssphinx.css")
-    app.connect("build-finished", _copy_css)
+    app.add_js_file("ewokssphinx.js")
+    app.connect("build-finished", _copy_static_files)
 
     return {
         "version": "1.0",
@@ -37,8 +38,9 @@ def setup(app: Sphinx):
     }
 
 
-def _copy_css(app, exception):
+def _copy_static_files(app, exception):
     if app.builder.name != "html" or exception:
         return
     static_dir = Path(app.builder.outdir) / "_static"
-    copyfile(Path(__file__).parent / "ewokssphinx.css", static_dir / "ewokssphinx.css")
+    for filename in ("ewokssphinx.css", "ewokssphinx.js"):
+        copyfile(Path(__file__).parent / filename, static_dir / filename)

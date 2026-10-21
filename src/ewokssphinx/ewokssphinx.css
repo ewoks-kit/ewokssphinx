@@ -24,7 +24,32 @@
     margin: 0;
 }
 
-.ewokssphinx-task .ewokssphinx-tag {
+.ewokssphinx-task .ewokssphinx-tag,
+.ewokssphinx-tag-filter .ewokssphinx-tag {
+    cursor: pointer;
     border-radius: 0.75em;
     padding: 0.1em 0.6em;
+}
+
+.ewokssphinx-tag.ewokssphinx-tag-include {
+    background-color: var(--sd-color-success, green);
+    color: var(--sd-color-success-text, white);
+}
+
+.ewokssphinx-tag.ewokssphinx-tag-exclude {
+    background-color: var(--sd-color-danger, red);
+    color: var(--sd-color-danger-text, white);
+    text-decoration: line-through;
+}
+
+.ewokssphinx-tag-filter {
+    margin-bottom: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    align-items: center;
+}
+
+.ewokssphinx-tag-filter-count {
+    font-style: italic;
 }
