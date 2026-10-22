@@ -1,9 +1,12 @@
 from pathlib import Path
 
+import sphinx
 from sphinx.application import Sphinx
-from sphinx.util.osutil import copyfile
+from sphinx.config import Config
 
 from .ewoks_task_directive import EwoksTaskDirective
+
+_STATIC_DIR = Path(__file__).parent / "static"
 
 
 def setup(app: Sphinx):
@@ -27,9 +30,12 @@ def setup(app: Sphinx):
         description="Ignore Ewoks task discovery errors. ",
     )
 
+    if sphinx.version_info >= (9, 1):
+        app.add_static_dir(_STATIC_DIR)
+    else:
+        app.connect("config-inited", _add_static_path)
     app.add_css_file("ewokssphinx.css")
     app.add_js_file("ewokssphinx.js")
-    app.connect("build-finished", _copy_static_files)
 
     return {
         "version": "1.0",
@@ -38,9 +44,5 @@ def setup(app: Sphinx):
     }
 
 
-def _copy_static_files(app, exception):
-    if app.builder.name != "html" or exception:
-        return
-    static_dir = Path(app.builder.outdir) / "_static"
-    for filename in ("ewokssphinx.css", "ewokssphinx.js"):
-        copyfile(Path(__file__).parent / filename, static_dir / filename)
+def _add_static_path(app: Sphinx, config: Config) -> None:
+    config.html_static_path.append(str(_STATIC_DIR))

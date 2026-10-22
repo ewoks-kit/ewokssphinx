@@ -53,7 +53,7 @@ package-dir = { "" = "src" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-ewokssphinx = ["*.css", "*.js"]
+ewokssphinx = ["static/*"]
 
 [tool.coverage.run]
 omit = ['*/tests/*']
