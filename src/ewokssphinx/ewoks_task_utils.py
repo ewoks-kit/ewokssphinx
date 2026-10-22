@@ -60,6 +60,7 @@ def discover_tasks(
             "inputs": inputs,
             "outputs": outputs,
             "submodels": {k: _parse_pydantic_model(v) for k, v in submodels.items()},
+            "tags": task.get("tags", []),
         }
         _ = TaskDescription(**serialized_task)
 

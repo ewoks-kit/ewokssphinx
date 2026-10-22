@@ -19,7 +19,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "sphinx",
-    "ewokscore >=3.1.0",
+    "ewokscore >=5.1.0rc6",
     "pydantic",
 ]
 

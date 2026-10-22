@@ -38,14 +38,15 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
     if task["description"]:
         section.extend(_rst_to_nodes(directive, task["description"]))
 
-    # Identifier + task type
-    section.append(
-        nodes.field_list(
-            "",
-            _field_node("Identifier", nodes.literal(text=task["task_identifier"])),
-            _field_node("Task type", nodes.Text(task["task_type"])),
-        )
-    )
+    # Identifier + task type + tags
+    fields = [
+        _field_node("Identifier", nodes.literal(text=task["task_identifier"])),
+        _field_node("Task type", nodes.Text(task["task_type"])),
+    ]
+    tags = task.get("tags")
+    if tags:
+        fields.append(_field_node("Tags", _tags_node(tags)))
+    section.append(nodes.field_list("", *fields))
 
     section.append(
         _field_list(directive, {"inputs": task["inputs"], "outputs": task["outputs"]})
@@ -87,6 +88,14 @@ def _field_node(name: str, body: nodes.Element) -> nodes.field:
         nodes.field_name(text=name),
         nodes.field_body("", body),
     )
+
+
+def _tags_node(tags: list[str]) -> nodes.inline:
+    tag_nodes = []
+    for tag in tags:
+        tag_nodes.append(nodes.literal(text=tag, classes=["ewokssphinx-tag"]))
+        tag_nodes.append(nodes.Text(" "))
+    return nodes.inline("", "", *tag_nodes[:-1], classes=["ewokssphinx-tags"])
 
 
 def _term_node(name: str, is_required: bool) -> nodes.term:

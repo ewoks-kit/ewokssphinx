@@ -32,6 +32,37 @@
 
 ::::
 
+Class tasks can be classified by using the [`tags` class argument](https://ewokscore.readthedocs.io/en/latest/howtoguides/task_discovery.html#how-to-tag-tasks). These tags will also be displayed if present
+
+::::{tab-set}
+
+:::{tab-item} Python
+
+```{literalinclude} ../src/ewokssphinx/tests/dummy_tasks_tags.py
+:language: python
+```
+
+:::
+
+:::{tab-item} reST
+
+```rst
+.. ewokstasks:: ewokssphinx.tests.dummy_tasks_tags
+    :task-type: class
+```
+
+:::
+
+:::{tab-item} Sphinx
+
+```{ewokstasks} ewokssphinx.tests.dummy_tasks_tags
+:task-type: class
+```
+
+:::
+
+::::
+
 
 ## Class with pydantic model
 
@@ -117,6 +148,8 @@ If the task pydantic models contain themselves pydantic models, the nested model
 :::
 
 ::::
+
+
 
 
 ## Method

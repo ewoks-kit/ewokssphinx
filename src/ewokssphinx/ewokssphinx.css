@@ -23,3 +23,8 @@
 .ewokssphinx-task .ewokssphinx-examples li>div {
     margin: 0;
 }
+
+.ewokssphinx-task .ewokssphinx-tag {
+    border-radius: 0.75em;
+    padding: 0.1em 0.6em;
+}
