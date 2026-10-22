@@ -1,7 +1,6 @@
 import importlib
 import inspect
 import json
-import warnings
 from functools import reduce
 from pathlib import Path
 from typing import Annotated
@@ -147,13 +146,10 @@ def _parse_pydantic_field(
 ) -> ParameterDescription:
     examples = getattr(field_info, "examples", None)
     if examples is not None and not isinstance(examples, list):
-        warnings.warn(
-            f"'examples' of field '{name}' of '{qualname(model)}' should be a list "
-            "(this will raise an exception in a future release)",
-            FutureWarning,
-            stacklevel=2,
+        raise TypeError(
+            f"'examples' of field '{name}' of '{qualname(model)}' must be a list, "
+            f"got {type(examples).__name__}"
         )
-        examples = [examples]
     default = getattr(field_info, "default", None)
     if default is PydanticUndefined:
         default = None

@@ -53,6 +53,5 @@ def test_parse_non_list_examples():
     class Model(BaseModel):
         resources: dict = Field(default={}, examples={"cpu": 0.5})
 
-    with pytest.warns(FutureWarning, match="resources"):
-        (parameter,) = _parse_pydantic_model(Model)
-    assert parameter["examples"] == [{"cpu": 0.5}]
+    with pytest.raises(TypeError, match="resources"):
+        _parse_pydantic_model(Model)
