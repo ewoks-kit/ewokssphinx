@@ -1,0 +1,55 @@
+.ewokssphinx-task .ewokssphinx-field-list {
+    padding-left: 0.5em;
+}
+
+.ewokssphinx-task .ewokssphinx-default {
+    background-color: transparent;
+    border: none;
+}
+
+.ewokssphinx-task .ewokssphinx-required {
+    color: var(--sd-color-danger, red)
+}
+
+.ewokssphinx-task .ewokssphinx-examples {
+    font-style: italic;
+}
+
+.ewokssphinx-task .ewokssphinx-examples pre {
+    padding: 0.1rem;
+    border: none;
+}
+
+.ewokssphinx-task .ewokssphinx-examples li>div {
+    margin: 0;
+}
+
+.ewokssphinx-task .ewokssphinx-tag,
+.ewokssphinx-tag-filter .ewokssphinx-tag {
+    cursor: pointer;
+    border-radius: 0.75em;
+    padding: 0.1em 0.6em;
+}
+
+.ewokssphinx-tag.ewokssphinx-tag-include {
+    background-color: var(--sd-color-success, green);
+    color: var(--sd-color-success-text, white);
+}
+
+.ewokssphinx-tag.ewokssphinx-tag-exclude {
+    background-color: var(--sd-color-danger, red);
+    color: var(--sd-color-danger-text, white);
+    text-decoration: line-through;
+}
+
+.ewokssphinx-tag-filter {
+    margin-bottom: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    align-items: center;
+}
+
+.ewokssphinx-tag-filter-count {
+    font-style: italic;
+}

@@ -5,6 +5,7 @@ from sphinx.util.docutils import SphinxDirective
 
 from .ewoks_task_utils import cached_tasks
 from .ewoks_task_utils import discover_tasks
+from .ewoks_task_utils import filter_tasks_by_tags
 from .sphinx_task_utils import additional_model_nodes
 from .sphinx_task_utils import task_nodes
 
@@ -20,6 +21,8 @@ class EwoksTaskDirective(SphinxDirective):
     option_spec = {
         "task-type": _task_type_option,
         "ignore-import-error": directives.flag,
+        "include-tags": directives.unchanged,
+        "exclude-tags": directives.unchanged,
     }
 
     def run(self):
@@ -41,9 +44,20 @@ class EwoksTaskDirective(SphinxDirective):
             module_pattern,
             task_type,
         )
+        tasks = filter_tasks_by_tags(
+            tasks,
+            include_tags=_parse_tags(self.options.get("include-tags")),
+            exclude_tags=_parse_tags(self.options.get("exclude-tags")),
+        )
 
         task_sections = task_nodes(self, tasks)
         additional_model_section = additional_model_nodes(self, tasks)
         if additional_model_section is not None:
             return [*task_sections, additional_model_section]
         return task_sections
+
+
+def _parse_tags(argument: str | None) -> list[str]:
+    if not argument:
+        return []
+    return [tag.strip() for tag in argument.split(",") if tag.strip()]

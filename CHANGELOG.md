@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `ewokstasks` directive displays task tags.
+- `ewokstasks` directive: `include-tags` and `exclude-tags` options.
+- Filter tasks on tags in HTML pages.
 
 ### Changed
 

@@ -28,7 +28,7 @@ def _task_section(directive: SphinxDirective, task: dict[str, Any]) -> nodes.sec
     section = nodes.section(
         "",
         ids=[task["task_identifier"]],
-        classes=["ewokssphinx-task"],
+        classes=["ewokssphinx-task", *map(_model_class, task["submodels"])],
     )
 
     # Title
@@ -233,7 +233,11 @@ def additional_model_nodes(
     model_sections = []
     for task in tasks:
         for model_name, model_fields in task["submodels"].items():
-            section = nodes.section("", ids=[model_name])
+            section = nodes.section(
+                "",
+                ids=[model_name],
+                classes=["ewokssphinx-model", _model_class(model_name)],
+            )
             section.append(nodes.title("", model_name.split(".")[-1]))
 
             section.append(_field_list(directive, {"fields": model_fields}))
@@ -247,4 +251,10 @@ def additional_model_nodes(
         nodes.title("", "Additional models"),
         *model_sections,
         ids=["Additional models"],
+        classes=["ewokssphinx-models"],
     )
+
+
+def _model_class(model_name: str) -> str:
+    """CSS class linking a model section to the task sections that use the model."""
+    return "ewokssphinx-model-" + nodes.make_id(model_name)
