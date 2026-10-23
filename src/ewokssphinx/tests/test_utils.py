@@ -1,6 +1,9 @@
+import pytest
 from pydantic import BaseModel
+from pydantic import Field
 
 from ewokssphinx.ewoks_task_utils import _extract_submodels
+from ewokssphinx.ewoks_task_utils import _parse_pydantic_model
 
 
 class Type1(BaseModel):
@@ -44,3 +47,11 @@ def test_extract_type_inputs():
         "ewokssphinx.tests.dummy_tasks_nested.Coordinates",
         "ewokssphinx.tests.dummy_tasks_nested.Planet",
     ]
+
+
+def test_parse_non_list_examples():
+    class Model(BaseModel):
+        resources: dict = Field(default={}, examples={"cpu": 0.5})
+
+    with pytest.raises(TypeError, match="resources"):
+        _parse_pydantic_model(Model)

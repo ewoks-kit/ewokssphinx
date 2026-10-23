@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ewokstasks` directive displays task tags.
 
+### Changed
+
+- `ewokstasks` directive: clear error for pydantic fields with non-list `examples`.
+
 ## [2.2.1] - 2026-04-21
 
 ### Fixed
