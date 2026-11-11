@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0rc1] - 2026-11-11
+
 ### Added
 
 - `ewokstasks` directive displays task tags.
@@ -107,7 +109,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `ewokstasks` directive.
 
-[unreleased]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.2.1...HEAD
+[unreleased]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.3.0rc1...HEAD
+[v2.3.0rc1]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.2.1...v2.3.0rc1
 [2.2.1]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/ewoks-kit/ewokssphinx/compare/v2.0.0...v2.1.0
